@@ -1,5 +1,5 @@
 # Virtual env
-/myenv/*
+/newenv/*
 
 # sqlite3 DB
 /db.sqlite3
