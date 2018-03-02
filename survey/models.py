@@ -1,6 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import User
-from ..accounts.category import SEMESTER_CATEGORY
+
+SEMESTER_CATEGORY = (
+    ('s', '1학기'),
+    ('f', '2학기')
+)
 
 
 class Survey(models.Model):
