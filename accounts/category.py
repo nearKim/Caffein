@@ -165,11 +165,7 @@ DEPARTMENT_DICT = {
     )
 }
 
-DEPARTMENT_CATEGORY = tuple()
-
-for tupl in list(DEPARTMENT_DICT.values()):
-    for element in tupl:
-        DEPARTMENT_CATEGORY += element
+DEPARTMENT_CATEGORY = tuple([element for tupl in list(DEPARTMENT_DICT.values()) for element in tupl])
 
 STUDENT_CATEGORY = (
     ('u', '학부'),

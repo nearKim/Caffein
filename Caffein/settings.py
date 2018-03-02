@@ -40,6 +40,7 @@ INSTALLED_APPS = [
 
     # User added apps
     'accounts',
+    'survey',
 
     # Third Party
     'imagekit',
