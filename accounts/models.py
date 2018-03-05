@@ -9,9 +9,14 @@ from .category import (
     DEPARTMENT_CATEGORY
 )
 
+from Caffein.utils.mixins import (
+    PostableMixin,
+    TimeStampedModelMixin
+)
 
-class Profile(models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+
+class Profile(models.Model, TimeStampedModelMixin):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, primary_key=True)
     name = models.CharField(max_length=30, null=False, blank=False, verbose_name='이름')
     birth_date = models.DateField(null=False, blank=False, verbose_name='생년월일')
     phone = models.CharField(max_length=20, blank=False, null=False, verbose_name='전화번호')
@@ -39,15 +44,11 @@ class Profile(models.Model):
                                       format='JPEG',
                                       options={'quality': 60})
 
-    # Default Data
-    created_at = models.DateTimeField(auto_now_add=True)
-    modified_at = models.DateTimeField(auto_now=True)
-
     def __str__(self):
         return self.name
 
 
-class ActiveUser(models.Model):
+class ActiveUser(models.Model, TimeStampedModelMixin):
     user = models.OneToOneField(Profile, on_delete=models.CASCADE)
     last_active_year = models.DateField(auto_now=True, verbose_name='최종활동년도')
     last_active_semester = models.CharField(max_length=1, choices=SEMESTER_CATEGORY,
@@ -57,12 +58,11 @@ class ActiveUser(models.Model):
     is_new = models.BooleanField(default=False, blank=False, null=False, verbose_name='신입회원여부')
     is_paid = models.BooleanField(default=False, blank=False, null=False, verbose_name='입금확인')
 
-    # Default Data
-    created_at = models.DateTimeField(auto_now_add=True)
-    modified_at = models.DateTimeField(auto_now=True)
+    class Meta:
+        unique_together = ['user', 'last_active_year', 'last_active_semester']
 
 
-class Partners(models.Model):
+class Partners(models.Model, TimeStampedModelMixin):
     partner_year = models.DateField(null=False, blank=False, verbose_name='짝지 년도')
     partner_semester = models.CharField(max_length=1,
                                         choices=SEMESTER_CATEGORY,
@@ -96,6 +96,3 @@ class Partners(models.Model):
                                         related_name='new_partner3')
     score = models.IntegerField(default=0, verbose_name='점수')
 
-    # Default Data
-    created_at = models.DateTimeField(auto_now_add=True)
-    modified_at = models.DateTimeField(auto_now=True)
