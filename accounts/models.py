@@ -2,20 +2,20 @@ from django.db import models
 from imagekit.models import ProcessedImageField
 from imagekit.processors import Thumbnail
 from django.conf import settings
-from .category import (
+from utils.category import (
     SEMESTER_CATEGORY,
     STUDENT_CATEGORY,
     COLLEGE_CATEGORY,
     DEPARTMENT_CATEGORY
 )
 
-from Caffein.utils.mixins import (
+from utils.mixins import (
     PostableMixin,
     TimeStampedModelMixin
 )
 
 
-class Profile(models.Model, TimeStampedModelMixin):
+class Profile(TimeStampedModelMixin):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, primary_key=True)
     name = models.CharField(max_length=30, null=False, blank=False, verbose_name='이름')
     birth_date = models.DateField(null=False, blank=False, verbose_name='생년월일')
@@ -48,7 +48,7 @@ class Profile(models.Model, TimeStampedModelMixin):
         return self.name
 
 
-class ActiveUser(models.Model, TimeStampedModelMixin):
+class ActiveUser(TimeStampedModelMixin):
     user = models.OneToOneField(Profile, on_delete=models.CASCADE)
     last_active_year = models.DateField(auto_now=True, verbose_name='최종활동년도')
     last_active_semester = models.CharField(max_length=1, choices=SEMESTER_CATEGORY,
@@ -62,7 +62,7 @@ class ActiveUser(models.Model, TimeStampedModelMixin):
         unique_together = ['user', 'last_active_year', 'last_active_semester']
 
 
-class Partners(models.Model, TimeStampedModelMixin):
+class Partners(TimeStampedModelMixin):
     partner_year = models.DateField(null=False, blank=False, verbose_name='짝지 년도')
     partner_semester = models.CharField(max_length=1,
                                         choices=SEMESTER_CATEGORY,
