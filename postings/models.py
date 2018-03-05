@@ -5,7 +5,7 @@ from utils.mixins import PostableMixin
 
 
 class Post(PostableMixin):
-    author = models.ForeignKey(settings.AUTH_USER_MODEL)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     title = models.CharField(max_length=100, verbose_name='제목', help_text='제목을 입력해주세요. 100자 내외')
 
     # TODO: add support for multiple photos.
@@ -51,7 +51,7 @@ class CoffeeEducation(Meeting):
                                   null=True,
                                   blank=True,
                                   verbose_name='난이도')
-    address = models.CharField(max_length=50,
+    address = models.CharField(max_length=100,
                                null=True,
                                blank=True,
                                verbose_name='교육 장소')
@@ -69,7 +69,7 @@ class OfficialEvent(Meeting):
     )
 
     category = models.CharField(max_length=1, choices=EVENT_CATEGORY, null=False, blank=False)
-    address = models.CharField(max_length=50,
+    address = models.CharField(max_length=100,
                                null=True,
                                blank=True,
                                verbose_name='행사 장소')
@@ -77,7 +77,7 @@ class OfficialEvent(Meeting):
 
 
 class Comment(PostableMixin):
-    post = models.ForeignKey(Post)
-    author = models.ForeignKey(settings.AUTH_USER_MODEL)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
 # TODO: Create PhotoPost class and link every Post model dependent class to it.

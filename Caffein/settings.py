@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'utils',
     'accounts',
     'survey',
+    'cafe',
+    'postings',
 
     # Third Party
     'imagekit',

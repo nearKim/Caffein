@@ -52,9 +52,9 @@ class ActiveUser(TimeStampedModelMixin):
     user = models.OneToOneField(Profile, on_delete=models.CASCADE)
     active_year = models.DateField(auto_now=True, verbose_name='활동년도')
     active_semester = models.CharField(max_length=1, choices=SEMESTER_CATEGORY,
-                                            null=False,
-                                            blank=False,
-                                            verbose_name='활동학기')
+                                       null=False,
+                                       blank=False,
+                                       verbose_name='활동학기')
     is_paid = models.BooleanField(default=False, blank=False, null=False, verbose_name='입금확인')
 
     class Meta:
@@ -94,4 +94,3 @@ class Partners(TimeStampedModelMixin):
                                         verbose_name='아래짝지3',
                                         related_name='new_partner3')
     score = models.IntegerField(default=0, verbose_name='점수')
-
