@@ -50,16 +50,15 @@ class Profile(TimeStampedModelMixin):
 
 class ActiveUser(TimeStampedModelMixin):
     user = models.OneToOneField(Profile, on_delete=models.CASCADE)
-    last_active_year = models.DateField(auto_now=True, verbose_name='최종활동년도')
-    last_active_semester = models.CharField(max_length=1, choices=SEMESTER_CATEGORY,
+    active_year = models.DateField(auto_now=True, verbose_name='활동년도')
+    active_semester = models.CharField(max_length=1, choices=SEMESTER_CATEGORY,
                                             null=False,
                                             blank=False,
-                                            verbose_name='최종활동학기')
-    is_new = models.BooleanField(default=False, blank=False, null=False, verbose_name='신입회원여부')
+                                            verbose_name='활동학기')
     is_paid = models.BooleanField(default=False, blank=False, null=False, verbose_name='입금확인')
 
     class Meta:
-        unique_together = ['user', 'last_active_year', 'last_active_semester']
+        unique_together = ['user', 'active_year', 'active_semester']
 
 
 class Partners(TimeStampedModelMixin):

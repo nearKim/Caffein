@@ -10,7 +10,8 @@ class TimeStampedModelMixin(models.Model):
 
 
 class PostableMixin(TimeStampedModelMixin):
-    message = models.TextField()
+
+    content = models.TextField(verbose_name='내용')
 
     class Meta:
         abstract = True
