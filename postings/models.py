@@ -1,7 +1,17 @@
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
 from django.conf import settings
+from django.utils.text import slugify
+from datetime import datetime
+import os
 from utils.mixins import PostableMixin
+
+
+def get_photo_path(instance, filename):
+    author = instance.post.author_id
+    title = instance.post.title
+    slug = slugify(title)
+    return os.path.join(settings.MEDIA_DIR, 'photo/{:%Y/%m/%d}/{}/{}-{}'.format(datetime.now(), author, slug, filename))
 
 
 class Post(PostableMixin):
@@ -12,6 +22,11 @@ class Post(PostableMixin):
 
     def __str__(self):
         return self.title
+
+
+class Photo(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, default=None, related_name='photo')
+    photo = models.ImageField(upload_to=get_photo_path, verbose_name='사진')
 
 
 class Meeting(Post):
