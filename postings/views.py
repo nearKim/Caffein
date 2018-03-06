@@ -8,6 +8,7 @@ from .forms import *
 
 
 def photo_post(request):
+    # TODO: Currently the number of available photos is limited to 3. Dynamic upload is required.
     photo_formset = modelformset_factory(Photo, fields=('photo',), extra=3)
 
     if request.method == 'POST':
@@ -24,6 +25,7 @@ def photo_post(request):
                 temp_photo = Photo(post=post_form, photo=photo)
                 temp_photo.save()
             messages.success(request, "Photo successfully uploaded.")
+            # TODO: Add proper redirection
             return HttpResponse("SUCCESS!")
         else:
             print(post_form.errors)
@@ -31,4 +33,5 @@ def photo_post(request):
     else:
         post_form = PostForm()
         formset = photo_formset(queryset=Photo.objects.none())
+        # TODO: Add proper rendering html
     return render(request, 'postings/test.html', {'postForm': post_form, 'formset': formset})
