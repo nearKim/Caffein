@@ -21,7 +21,10 @@ def photo_post(request):
             post_form.save()
 
             for form in formset.cleaned_data:
-                photo = form['photo']
+                try:
+                    photo = form['photo']
+                except:
+                    continue
                 temp_photo = Photo(post=post_form, photo=photo)
                 temp_photo.save()
             messages.success(request, "Photo successfully uploaded.")

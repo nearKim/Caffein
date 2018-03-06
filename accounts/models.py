@@ -1,3 +1,6 @@
+import os
+
+from django.utils.timezone import now
 from django.db import models
 from imagekit.models import ProcessedImageField
 from imagekit.processors import Thumbnail
@@ -10,17 +13,33 @@ from utils.category import (
 )
 
 from utils.mixins import (
-    PostableMixin,
     TimeStampedModelMixin
 )
+
+from .validators import *
+
+
+def get_profile_path(instance, filename):
+    user_id = instance.profile.user_id
+    user_name = instance.profile.name
+    return os.path.join(settings.MEDIA_ROOT,
+                        'profiles/{}/{}-{}/{:%Y/%m/%d}'.format(user_id, user_name, filename, datetime.now()))
 
 
 class Profile(TimeStampedModelMixin):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, primary_key=True)
     name = models.CharField(max_length=30, null=False, blank=False, verbose_name='이름')
     birth_date = models.DateField(null=False, blank=False, verbose_name='생년월일')
-    phone = models.CharField(max_length=20, blank=False, null=False, verbose_name='전화번호')
-    student_no = models.CharField(max_length=12, blank=False, null=False, verbose_name='학번')
+    phone = models.CharField(max_length=20, validators=[phone_validator],
+                             blank=False,
+                             null=False,
+                             help_text='01x-xxxx-xxxx 형식으로 적어주세요',
+                             verbose_name='휴대폰번호')
+    student_no = models.CharField(max_length=12, validators=[student_no_validator],
+                                  blank=False,
+                                  null=False,
+                                  help_text='20xx-xxxxx 형식으로 적어주세요',
+                                  verbose_name='학번')
     college = models.CharField(max_length=3, choices=COLLEGE_CATEGORY,
                                null=False,
                                blank=False,
@@ -34,12 +53,12 @@ class Profile(TimeStampedModelMixin):
                                         null=False,
                                         blank=False,
                                         verbose_name='학생 유형')
-    enroll_year = models.DateField(auto_now_add=True, verbose_name='가입년도')
+    enroll_year = models.PositiveIntegerField(default=now().year, verbose_name='가입년도')
     enroll_semester = models.CharField(max_length=1, choices=SEMESTER_CATEGORY,
                                        null=False,
                                        blank=False,
                                        verbose_name='가입학기')
-    profile_pic = ProcessedImageField(blank=True, upload_to='profile_pic',
+    profile_pic = ProcessedImageField(blank=True, upload_to=get_profile_path,
                                       processors=[Thumbnail(300, 300)],
                                       format='JPEG',
                                       options={'quality': 60})
@@ -50,7 +69,7 @@ class Profile(TimeStampedModelMixin):
 
 class ActiveUser(TimeStampedModelMixin):
     user = models.OneToOneField(Profile, on_delete=models.CASCADE)
-    active_year = models.DateField(auto_now=True, verbose_name='활동년도')
+    active_year = models.DateField(default=now().year, verbose_name='활동년도')
     active_semester = models.CharField(max_length=1, choices=SEMESTER_CATEGORY,
                                        null=False,
                                        blank=False,

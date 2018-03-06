@@ -5,20 +5,19 @@ from django.utils.text import slugify
 from datetime import datetime
 import os
 from utils.mixins import PostableMixin
+from cafe.models import Cafe
 
 
 def get_photo_path(instance, filename):
     author = instance.post.author_id
     title = instance.post.title
     slug = slugify(title)
-    return os.path.join(settings.MEDIA_DIR, 'photo/{:%Y/%m/%d}/{}/{}-{}'.format(datetime.now(), author, slug, filename))
+    return os.path.join(settings.MEDIA_ROOT, 'photo/{:%Y/%m/%d}/{}/{}-{}'.format(datetime.now(), author, slug, filename))
 
 
 class Post(PostableMixin):
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     title = models.CharField(max_length=100, verbose_name='제목', help_text='제목을 입력해주세요. 100자 내외')
-
-    # TODO: add support for multiple photos.
 
     def __str__(self):
         return self.title
@@ -39,8 +38,7 @@ class Meeting(Post):
 
 
 class CoffeeMeeting(Meeting):
-    # TODO: create CAFE DB and connect to it
-    pass
+    cafe = models.ForeignKey(Cafe, on_delete=models.DO_NOTHING, blank=False, null=False)
 
 
 class CoffeeEducation(Meeting):
