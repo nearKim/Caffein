@@ -31,9 +31,6 @@ class CafeComment(PostableMixin):
     cafe = models.ForeignKey(Cafe, on_delete=models.CASCADE)
     commenter = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
-    class Meta:
-        unique_together = ['cafe', 'commenter']
-
 
 class CoffeeNote(TimeStampedModelMixin):
     cafe = models.ForeignKey(Cafe, on_delete=models.CASCADE)

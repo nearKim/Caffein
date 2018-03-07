@@ -21,8 +21,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'nzal6^kda#&-3hwine$ay8#_flble-g&&xznp5&srd_sj!m)%f'
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+
 
 ALLOWED_HOSTS = []
 
@@ -63,7 +62,7 @@ ROOT_URLCONF = 'Caffein.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, '../../templates')]
+        'DIRS': [os.path.join(BASE_DIR, 'templates')]
         ,
         'APP_DIRS': True,
         'OPTIONS': {
@@ -130,3 +129,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIAFILE_DIRS = [
     os.path.join(BASE_DIR, 'Caffein', 'media'),
 ]
+
+# User Model
+AUTH_USER_MODEL = 'accounts.User'

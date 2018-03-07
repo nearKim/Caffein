@@ -37,4 +37,4 @@ def photo_post(request):
         post_form = PostForm()
         formset = photo_formset(queryset=Photo.objects.none())
         # TODO: Add proper rendering html
-    return render(request, 'postings/test.html', {'postForm': post_form, 'formset': formset})
+    return render(request, 'postings/test.html', {'post_form': post_form, 'formset': formset})

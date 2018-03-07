@@ -173,6 +173,6 @@ STUDENT_CATEGORY = (
     ('i', '교환학생'),
 )
 SEMESTER_CATEGORY = (
-    ('s', '1학기'),
-    ('f', '2학기')
+    (True, '1학기'),
+    (False, '2학기')
 )

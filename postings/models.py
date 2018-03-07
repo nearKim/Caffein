@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
 from django.conf import settings
@@ -12,7 +13,8 @@ def get_photo_path(instance, filename):
     author = instance.post.author_id
     title = instance.post.title
     slug = slugify(title)
-    return os.path.join(settings.MEDIA_ROOT, 'photo/{:%Y/%m/%d}/{}/{}-{}'.format(datetime.now(), author, slug, filename))
+    return os.path.join(settings.MEDIA_ROOT,
+                        'photo/{:%Y/%m/%d}/{}/{}-{}'.format(datetime.now(), author, slug, filename))
 
 
 class Post(PostableMixin):
@@ -29,9 +31,15 @@ class Photo(models.Model):
 
 
 class Meeting(Post):
-    people_number = models.PositiveIntegerField()
-    participants = ArrayField(models.PositiveIntegerField(), size=people_number)
-    meeting_date = models.DateTimeField()
+
+    def participant_validator(self):
+        if len(self.participants) > self.people_number:
+            raise ValidationError('참석 인원을 초과하였습니다.')
+
+    people_number = models.PositiveIntegerField(default=1, null=False, blank=False, verbose_name='참석 인원')
+    participants = ArrayField(models.PositiveIntegerField(), validators=[participant_validator, ], verbose_name='참석자')
+    participants_backup = ArrayField(models.PositiveIntegerField(), verbose_name='예비 인원')
+    meeting_date = models.DateTimeField(null=False, blank=False, verbose_name='모임 일시')
 
     class Meta:
         abstract = True
