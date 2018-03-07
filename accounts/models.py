@@ -17,14 +17,14 @@ from imagekit.models import ProcessedImageField
 from imagekit.processors import Thumbnail
 from django.utils.timezone import now
 
-from utils.category import (
+from core.category import (
     SEMESTER_CATEGORY,
     STUDENT_CATEGORY,
     COLLEGE_CATEGORY,
     DEPARTMENT_CATEGORY
 )
 
-from utils.mixins import (
+from core.mixins import (
     TimeStampedModelMixin
 )
 
@@ -81,13 +81,11 @@ class User(AbstractBaseUser, PermissionsMixin):
                              validators=[phone_validator],
                              blank=False,
                              null=False,
-                             # default='010-0000-0000',
                              help_text='01x-xxxx-xxxx 형식으로 적어주세요')
     student_no = models.CharField(_('학번'), max_length=12,
                                   validators=[student_no_validator],
                                   blank=False,
                                   null=False,
-                                  default='2000-00000',
                                   help_text='20xx-xxxxx 형식으로 적어주세요')
     college = models.CharField(_('단과대학'), max_length=3,
                                choices=COLLEGE_CATEGORY,

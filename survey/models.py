@@ -1,9 +1,7 @@
 from django.db import models
-from django.contrib.auth.models import User
 from django.conf import settings
-from utils.category import SEMESTER_CATEGORY
-from utils.mixins import (
-    PostableMixin,
+from core.category import SEMESTER_CATEGORY
+from core.mixins import (
     TimeStampedModelMixin
 )
 

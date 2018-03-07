@@ -5,7 +5,7 @@ from django.conf import settings
 from django.utils.text import slugify
 from datetime import datetime
 import os
-from utils.mixins import PostableMixin
+from core.mixins import PostableMixin
 from cafe.models import Cafe
 
 

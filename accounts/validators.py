@@ -13,5 +13,5 @@ def student_no_validator(value):
 
 
 def enroll_year_validator(value):
-    if not re.match(r'^(20[\d+]{2})$', value):
+    if not re.match(r'20[\d+]{2}', str(value)):
         raise ValidationError('가입년도를 정확히 입력해 주세요.')
