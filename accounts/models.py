@@ -1,6 +1,7 @@
 import os
 
 from django.conf import settings
+from django.urls import reverse
 
 if not settings.configured:
     settings.configure('Caffein.settings.dev', DEBUG=True)
@@ -16,7 +17,6 @@ from django.db import models
 from imagekit.models import ProcessedImageField
 from imagekit.processors import Thumbnail
 from django.utils.timezone import now
-
 from core.category import (
     SEMESTER_CATEGORY,
     STUDENT_CATEGORY,
@@ -24,18 +24,15 @@ from core.category import (
     DEPARTMENT_CATEGORY
 )
 
-from core.mixins import (
-    TimeStampedModelMixin
-)
-
+from core.mixins import TimeStampedModelMixin
 from .validators import *
 
 
 def get_profile_path(instance, filename):
-    user_id = instance.profile.user_id
-    user_name = instance.profile.name
-    return os.path.join(settings.MEDIA_ROOT,
-                        'profiles/{}/{}-{}/{:%Y/%m/%d}'.format(user_id, user_name, filename, now()))
+    user_id = instance.pk
+    return 'accounts/profile/{}/{:%Y/%m/%d}/{}'.format(user_id, now(), filename)
+    # return os.path.join(settings.MEDIA_ROOT,
+    #                     'profiles/{}/{:%Y/%m/%d}/{}'.format(user_id, now(), filename))
 
 
 class UserManager(BaseUserManager):
@@ -75,7 +72,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     Custom user model for Caffein. Username would be replaced to Email field.
     is_new flag designates if this user is newmember or not.
     """
-    email = models.EmailField(_('이메일'), unique=True)
+    email = models.EmailField(_('이메일'),
+                              unique=True,
+                              validators=[snumail_validator],
+                              help_text='서울대학교 이메일을 입력해주세요')
     name = models.CharField(_('이름'), max_length=30)
     phone = models.CharField(_('휴대폰번호'), max_length=20,
                              validators=[phone_validator],
@@ -104,15 +104,13 @@ class User(AbstractBaseUser, PermissionsMixin):
                                       null=False,
                                       blank=False,
                                       default=now().year)
-    enroll_semester = models.PositiveIntegerField(_('가입학기'), max_length=1,
+    enroll_semester = models.PositiveIntegerField(_('가입학기'),
                                                   choices=SEMESTER_CATEGORY,
                                                   default=1,
                                                   null=False,
                                                   blank=False)
-    profile_pic = ProcessedImageField(blank=True, upload_to=get_profile_path,
-                                      processors=[Thumbnail(300, 300)],
-                                      format='JPEG',
-                                      options={'quality': 60})
+    profile_pic = models.ImageField(blank=True,
+                                    upload_to=get_profile_path)
 
     date_joined = models.DateTimeField(_('가입일'), auto_now_add=True)
 
@@ -158,11 +156,14 @@ class User(AbstractBaseUser, PermissionsMixin):
         '''
         send_mail(subject, message, from_email, [self.email], **kwargs)
 
+    def get_absolute_url(self):
+        return reverse('accounts:user-detail', kwargs={'pk': self.pk})
+
 
 class ActiveUser(TimeStampedModelMixin):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     active_year = models.PositiveIntegerField(default=now().year, verbose_name='활동년도')
-    active_semester = models.PositiveIntegerField(max_length=1, choices=SEMESTER_CATEGORY,
+    active_semester = models.PositiveIntegerField(choices=SEMESTER_CATEGORY,
                                                   null=False,
                                                   blank=False,
                                                   verbose_name='활동학기')
@@ -179,11 +180,10 @@ class Partners(TimeStampedModelMixin):
                                                null=False,
                                                blank=False,
                                                verbose_name='짝지 년도')
-    partner_semester = models.PositiveIntegerField(max_length=1,
-                                           choices=SEMESTER_CATEGORY,
-                                           null=False,
-                                           blank=False,
-                                           verbose_name='짝지 학기')
+    partner_semester = models.PositiveIntegerField(choices=SEMESTER_CATEGORY,
+                                                   null=False,
+                                                   blank=False,
+                                                   verbose_name='짝지 학기')
     old_partner = models.OneToOneField(ActiveUser,
                                        on_delete=models.CASCADE,
                                        verbose_name='위짝지',

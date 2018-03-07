@@ -13,5 +13,9 @@ def student_no_validator(value):
 
 
 def enroll_year_validator(value):
-    if not re.match(r'20[\d+]{2}', str(value)):
+    if not re.match(r'^(20[\d+]{2})$', str(value)):
         raise ValidationError('가입년도를 정확히 입력해 주세요.')
+
+def snumail_validator(value):
+    if not re.match(r'^(\w+@snu.ac.kr)$',value):
+        raise ValidationError('서울대학교 이메일을 입력해 주세요.')

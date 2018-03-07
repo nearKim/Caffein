@@ -1,22 +1,46 @@
 from django.contrib import messages
-from django.contrib.auth import authenticate, login
 from django.http import HttpResponse
 from django.shortcuts import render
+from django.urls import reverse_lazy
+
 from .forms import (
     UserForm
 )
+from .models import User
+from django.views.generic import (
+    CreateView,
+    UpdateView,
+    DetailView
+)
 
 
-def create_user(request):
-    if request.method == 'POST':
-        form = UserForm(request.POST)
-        if form.is_valid():
-            form.save()
-            # user_email = form.cleaned_data('email')
-            # raw_pass = form.cleaned_data.get('password')
-            # user = authenticate(username=user_email, password=raw_pass)
-            # login(request, user)
-            return HttpResponse('SUCCESS!')
-    else:
-        form = UserForm(request.POST)
-    return render(request, 'accounts/account_test.html', {'form': form})
+class UserActionMixin(object):
+    fields = ('name', 'email', 'phone', 'student_no', 'college', 'department',
+              'student_category', 'enroll_year', 'enroll_semester', 'profile_pic')
+
+    @property
+    def success_msg(self):
+        return NotImplemented
+
+    def form_valid(self, form):
+        messages.info(self.request, self.success_msg)
+        return super(UserActionMixin, self).form_valid(form)
+
+
+class UserCreateView(UserActionMixin, CreateView):
+    model = User
+    success_msg = "회원가입이 완료되었습니다."
+
+
+class UserUpdateView(UserActionMixin, UpdateView):
+    model = User
+    success_msg = "회원정보가 수정되었습니다."
+
+
+def user_delete_view(request, pk):
+    return HttpResponse("들어올땐 마음대로였지만 나갈땐 아니란다.")
+
+
+class UserDetailView(DetailView):
+    # context_object_name = 'profile'
+    model = User

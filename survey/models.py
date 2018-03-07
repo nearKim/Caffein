@@ -8,7 +8,7 @@ from core.mixins import (
 
 class Survey(TimeStampedModelMixin):
     survey_year = models.DateField(null=False, blank=False)
-    survey_semester = models.PositiveIntegerField(max_length=1, choices=SEMESTER_CATEGORY,
+    survey_semester = models.PositiveIntegerField(choices=SEMESTER_CATEGORY,
                                                   blank=False,
                                                   null=False)
     survey_question = models.TextField(blank=False, null=False)
