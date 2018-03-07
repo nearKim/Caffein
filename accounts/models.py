@@ -1,5 +1,10 @@
 import os
 
+from django.conf import settings
+
+if not settings.configured:
+    settings.configure('Caffein.settings.dev', DEBUG=True)
+
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import PermissionsMixin
@@ -7,13 +12,11 @@ from django.core.mail import send_mail
 from django.contrib.auth.base_user import BaseUserManager
 
 from django.db import models
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 
-from django.utils.timezone import now
 from imagekit.models import ProcessedImageField
 from imagekit.processors import Thumbnail
-from django.conf import settings
+from django.utils.timezone import now
+
 from utils.category import (
     SEMESTER_CATEGORY,
     STUDENT_CATEGORY,
@@ -44,8 +47,8 @@ class UserManager(BaseUserManager):
         """
         if not email:
             raise ValueError('The given email must be set')
-        email = self.normalize_email(email)
-        user = self.model(email=email, **extra_fields)
+        email_ = self.normalize_email(email)
+        user = self.model(email=email_, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
         return user
@@ -73,16 +76,18 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_new flag designates if this user is newmember or not.
     """
     email = models.EmailField(_('이메일'), unique=True)
-    name = models.CharField(_('이름'), max_length=30, blank=True)
+    name = models.CharField(_('이름'), max_length=30)
     phone = models.CharField(_('휴대폰번호'), max_length=20,
                              validators=[phone_validator],
                              blank=False,
                              null=False,
+                             # default='010-0000-0000',
                              help_text='01x-xxxx-xxxx 형식으로 적어주세요')
     student_no = models.CharField(_('학번'), max_length=12,
                                   validators=[student_no_validator],
                                   blank=False,
                                   null=False,
+                                  default='2000-00000',
                                   help_text='20xx-xxxxx 형식으로 적어주세요')
     college = models.CharField(_('단과대학'), max_length=3,
                                choices=COLLEGE_CATEGORY,
@@ -96,9 +101,14 @@ class User(AbstractBaseUser, PermissionsMixin):
                                         choices=STUDENT_CATEGORY,
                                         null=False,
                                         blank=False)
-    enroll_year = models.PositiveIntegerField(_('가입년도'), default=now().year)
+    enroll_year = models.IntegerField(_('가입년도'),
+                                      validators=[enroll_year_validator],
+                                      null=False,
+                                      blank=False,
+                                      default=now().year)
     enroll_semester = models.BooleanField(_('가입학기'), max_length=1,
                                           choices=SEMESTER_CATEGORY,
+                                          default=True,
                                           null=False,
                                           blank=False)
     profile_pic = ProcessedImageField(blank=True, upload_to=get_profile_path,
@@ -131,7 +141,14 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name = _('회원')
         verbose_name_plural = _('회원')
 
-    def get_name(self):
+    def get_full_name(self):
+        '''
+        Returns the first_name plus the last_name, with a space in between.
+        '''
+        # full_name = '%s %s' % (self.first_name, self.last_name)
+        return self.name.strip()
+
+    def get_short_name(self):
         '''
         Returns the short name for the user.
         '''

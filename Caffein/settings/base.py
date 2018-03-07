@@ -45,6 +45,7 @@ INSTALLED_APPS = [
 
     # Third Party
     'imagekit',
+    'crispy_forms',
 ]
 
 MIDDLEWARE = [
@@ -104,7 +105,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Seoul'
 
 USE_I18N = True
 
@@ -132,3 +133,6 @@ MEDIAFILE_DIRS = [
 
 # User Model
 AUTH_USER_MODEL = 'accounts.User'
+
+# Crispy Forms
+CRISPY_TEMPLATE_PACK = 'bootstrap3'

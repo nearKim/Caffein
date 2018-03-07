@@ -14,8 +14,8 @@ MESSAGE_TAGS = {constants.ERROR: 'danger'}
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'postgres',
-        'USER': 'postgres',
+        'NAME': 'caffein',
+        'USER': 'admin',
         'PASSWORD': 'winteriscoming',
         'HOST':'localhost',
         'PORT':'5432',

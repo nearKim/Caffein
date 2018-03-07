@@ -1,26 +1,19 @@
-<{% load static %}
+{%  load crispy_forms_tags %}
+{% load static %}
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0,maximum-scale=1.0, user-scalable=no" />
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
     <title>{% block title %}TEST2!{% endblock %}</title>
-    <!-- 기본 bootstrap -->
-    {# <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" /> #}
-    {# <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootswatch/3.3.7/flatly/bootstrap.min.css" /> #}
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootswatch/3.3.7/journal/bootstrap.min.css" />
-    <!-- bootstrap: cosmo theme -->
-    <!-- <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootswatch/3.3.7/cosmo/bootstrap.min.css" /> -->
-
-    <!-- <link rel="stylesheet" href="/static/style.css" /> -->
-    <link rel="stylesheet" href="{% static "style.css" %}" />
 </head>
 
 <body>
 <form method="post">
     {% csrf_token %}
-    {{ user_form.as_p }}
-    {{ profile_form.as_p }}
-    <button type="submit">Save changes</button>
+    {{ form|crispy }}
+    <input class="btn btn-primary" type="submit">Save</input>
 </form>
 
 
