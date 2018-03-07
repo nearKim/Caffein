@@ -20,8 +20,8 @@ class OperationScheme(models.Model):
 
     )
     current_year = models.PositiveIntegerField(null=False, blank=False, default=now().year, verbose_name='현재 년도')
-    current_semester = models.BooleanField(null=False, blank=False, default=True, choices=SEMESTER_CATEGORY,
-                                           verbose_name='현재 학기')
+    current_semester = models.PositiveIntegerField(null=False, blank=False, default=True, choices=SEMESTER_CATEGORY,
+                                                   verbose_name='현재 학기')
     max_newcomers = models.PositiveIntegerField(null=False, blank=False, verbose_name='최대 신입수')
     partner_open_date = models.DateField(null=True, blank=True, verbose_name='짝지 시작일')
     partner_close_date = models.DateField(null=True, blank=True, verbose_name='짝지 마감일')

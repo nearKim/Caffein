@@ -104,11 +104,11 @@ class User(AbstractBaseUser, PermissionsMixin):
                                       null=False,
                                       blank=False,
                                       default=now().year)
-    enroll_semester = models.BooleanField(_('가입학기'), max_length=1,
-                                          choices=SEMESTER_CATEGORY,
-                                          default=True,
-                                          null=False,
-                                          blank=False)
+    enroll_semester = models.PositiveIntegerField(_('가입학기'), max_length=1,
+                                                  choices=SEMESTER_CATEGORY,
+                                                  default=1,
+                                                  null=False,
+                                                  blank=False)
     profile_pic = ProcessedImageField(blank=True, upload_to=get_profile_path,
                                       processors=[Thumbnail(300, 300)],
                                       format='JPEG',
@@ -162,14 +162,16 @@ class User(AbstractBaseUser, PermissionsMixin):
 class ActiveUser(TimeStampedModelMixin):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     active_year = models.PositiveIntegerField(default=now().year, verbose_name='활동년도')
-    active_semester = models.BooleanField(max_length=1, choices=SEMESTER_CATEGORY,
-                                          null=False,
-                                          blank=False,
-                                          verbose_name='활동학기')
+    active_semester = models.PositiveIntegerField(max_length=1, choices=SEMESTER_CATEGORY,
+                                                  null=False,
+                                                  blank=False,
+                                                  verbose_name='활동학기')
     is_paid = models.BooleanField(default=False, blank=False, null=False, verbose_name='입금확인')
 
     class Meta:
         unique_together = ['user', 'active_year', 'active_semester']
+        verbose_name = '활동 회원'
+        verbose_name_plural = '활동 회원'
 
 
 class Partners(TimeStampedModelMixin):
@@ -177,7 +179,7 @@ class Partners(TimeStampedModelMixin):
                                                null=False,
                                                blank=False,
                                                verbose_name='짝지 년도')
-    partner_semester = models.BooleanField(max_length=1,
+    partner_semester = models.PositiveIntegerField(max_length=1,
                                            choices=SEMESTER_CATEGORY,
                                            null=False,
                                            blank=False,
@@ -208,3 +210,7 @@ class Partners(TimeStampedModelMixin):
                                         verbose_name='아래짝지3',
                                         related_name='new_partner3')
     score = models.PositiveIntegerField(default=0, verbose_name='점수')
+
+    class Meta:
+        verbose_name = '짝지'
+        verbose_name_plural = '짝지'
