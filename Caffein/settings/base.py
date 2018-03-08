@@ -21,10 +21,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'nzal6^kda#&-3hwine$ay8#_flble-g&&xznp5&srd_sj!m)%f'
 
-
-
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -63,7 +60,7 @@ ROOT_URLCONF = 'Caffein.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')]
+        'DIRS': [os.path.join(BASE_DIR, 'Caffein', 'templates')]
         ,
         'APP_DIRS': True,
         'OPTIONS': {
@@ -78,8 +75,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'Caffein.wsgi.application'
-
-
 
 # Password validation
 # https://docs.djangoproject.com/en/2.0/ref/settings/#auth-password-validators
@@ -99,7 +94,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/2.0/topics/i18n/
 
@@ -112,7 +106,6 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/

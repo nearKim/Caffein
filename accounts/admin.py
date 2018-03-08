@@ -11,11 +11,12 @@ current_semester = 1 if now().month in range(3, 9) else 2
 
 
 class UserAdmin(admin.ModelAdmin):
-    list_display = ['email', 'name', 'phone', 'student_no', 'college', 'department',
+    list_display = ['id','email', 'name', 'phone', 'student_no', 'college', 'department',
                     'student_category', 'enroll_year', 'enroll_semester']
     actions = ['make_active_user', ]
     search_fields = ['name', 'email', 'phone']
     list_filter = ('college', 'department', 'student_category', 'enroll_year', 'enroll_semester')
+    list_display_links = ['name']
 
     def make_active_user(self, request, queryset):
         """
@@ -73,7 +74,7 @@ class ActiveUserAdmin(admin.ModelAdmin):
             return NotImplemented
 
         old_member = queryset.get(is_new=False)
-        new_members = queryset.filter(is_new=True).values_list('id', flat=True)
+        new_members = queryset.filter(is_new=True).values_list('user', flat=True)
         partner = Partners.objects.create(partner_year=current_year,
                                           partner_semester=current_semester,
                                           old_partner=old_member,
@@ -87,9 +88,17 @@ class ActiveUserAdmin(admin.ModelAdmin):
 
 
 class PartnerAdmin(admin.ModelAdmin):
-    list_display = ['partner_year', 'partner_semester', 'old_partner', 'new_partner', 'score']
+    list_display = ['partner_year', 'partner_semester', 'get_old', 'get_new', 'score']
     list_filter = ['partner_year', 'partner_semester', 'old_partner']
     ordering = ['-partner_year', '-partner_semester', '-score']
+
+    def get_old(self, queryset):
+        return queryset.old_partner.user.name
+    get_old.short_description = '위짝지'
+
+    def get_new(self, queryset):
+        return [User.objects.get(id=pk).name for pk in queryset.new_partner]
+    get_new.short_description = '아래짝지'
 
 
 admin.site.register(User, UserAdmin)

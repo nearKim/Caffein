@@ -2,16 +2,14 @@ from django.contrib import messages
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.urls import reverse_lazy
-
-from .forms import (
-    UserForm
-)
 from .models import User
 from django.views.generic import (
+    View,
     CreateView,
     UpdateView,
     DetailView
 )
+from .forms import UserForm
 
 
 class UserActionMixin(object):
@@ -41,6 +39,6 @@ def user_delete_view(request, pk):
     return HttpResponse("들어올땐 마음대로였지만 나갈땐 아니란다.")
 
 
-class UserDetailView(DetailView):
-    # context_object_name = 'profile'
+class UserDetail(DetailView):
     model = User
+
