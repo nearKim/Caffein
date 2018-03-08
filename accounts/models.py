@@ -1,6 +1,7 @@
 import os
 
 from django.conf import settings
+from django.contrib.postgres.fields import ArrayField
 from django.urls import reverse
 
 if not settings.configured:
@@ -109,8 +110,11 @@ class User(AbstractBaseUser, PermissionsMixin):
                                                   default=1,
                                                   null=False,
                                                   blank=False)
-    profile_pic = models.ImageField(blank=True,
-                                    upload_to=get_profile_path)
+    profile_pic = ProcessedImageField(blank=True,
+                                      upload_to=get_profile_path,
+                                      processors=[Thumbnail(100,100)],
+                                      format='JPEG',
+                                      options={'quality':60})
 
     date_joined = models.DateTimeField(_('가입일'), auto_now_add=True)
 
@@ -167,6 +171,7 @@ class ActiveUser(TimeStampedModelMixin):
                                                   null=False,
                                                   blank=False,
                                                   verbose_name='활동학기')
+    is_new = models.BooleanField(default=False, blank=False,null=False, verbose_name='신입회원여부')
     is_paid = models.BooleanField(default=False, blank=False, null=False, verbose_name='입금확인')
 
     class Meta:
@@ -188,27 +193,9 @@ class Partners(TimeStampedModelMixin):
                                        on_delete=models.CASCADE,
                                        verbose_name='위짝지',
                                        related_name='old_partner')
-    new_partner1 = models.OneToOneField(ActiveUser,
-                                        null=True,
-                                        blank=True,
-                                        on_delete=models.SET_NULL,
-                                        default=None,
-                                        verbose_name='아래짝지1',
-                                        related_name='new_partner1')
-    new_partner2 = models.OneToOneField(ActiveUser,
-                                        null=True,
-                                        blank=True,
-                                        on_delete=models.SET_NULL,
-                                        default=None,
-                                        verbose_name='아래짝지2',
-                                        related_name='new_partner2')
-    new_partner3 = models.OneToOneField(ActiveUser,
-                                        null=True,
-                                        blank=True,
-                                        on_delete=models.SET_NULL,
-                                        default=None,
-                                        verbose_name='아래짝지3',
-                                        related_name='new_partner3')
+    new_partner = ArrayField(models.PositiveIntegerField(),
+                             size=3,
+                             verbose_name='아래짝지')
     score = models.PositiveIntegerField(default=0, verbose_name='점수')
 
     class Meta:
