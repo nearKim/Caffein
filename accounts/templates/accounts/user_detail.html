@@ -4,16 +4,18 @@
 {% load imagekit %}
 
 {% block content %}
-    <section id="contact" class="contact mbr-box mbr-section mbr-section--relative mbr-section--bg-adapted">
+    <section id="user-detail" class="contact mbr-box mbr-section mbr-section--relative mbr-section--bg-adapted">
         <div class="container">
             <!-- Subscribe block -->
             <div class="col-md-6 col-sm-12 ">
                 <div class="row">
                     <div class="profile">
-                        <h4>프로필</h4>
+                        <div class="text-center">
+                            <h3>프로필</h3>
+                        </div>
                         <br>
                         <p class="libre-text mb-50">
-                            프로필 사진
+                            사진 &nbsp;&nbsp;
                             {% if user.profile_pic %}
                                 {% thumbnail "300x300" user.profile_pic %}
                             {% else %}
@@ -21,16 +23,16 @@
                             {% endif %}
                         </p>
                         <p class="libre-text mb-50">
-                            이름: {{ user.name }}
+                            이름: <b>{{ user.name }}</b>
                         </p>
                         <p class="libre-text mb-50">
-                            이메일: {{ user.email }}
+                            이메일: <b>{{ user.email }}</b>
                         </p>
                         <p class="libre-text mb-50">
-                            핸드폰: {{ user.phone }}
+                            핸드폰: <b>{{ user.phone }}</b>
                         </p>
                         <p class="libre-text mb-50">
-                            학번: {{ user.student_no }}
+                            학번: <b>{{ user.student_no }}</b>
                         </p>
                     </div>
                 </div>
@@ -40,30 +42,31 @@
                     <br>
                     <br>
                     <br>
+                    <br>
                     <p class="libre-text mb-50">
-                        단과대: {{ user.get_college_display }}
+                        단과대: <b>{{ user.get_college_display }}</b>
                     </p>
                     <p class="libre-text mb-50">
-                        학과: {{ user.get_department_display }}
+                        학과: <b>{{ user.get_department_display }}</b>
                     </p>
                     <p class="libre-text mb-50">
-                        분류: {{ user.get_student_category_display }}
+                        분류: <b>{{ user.get_student_category_display }}</b>
                     </p>
                     <p class="libre-text mb-50">
-                        가입년도: {{ user.enroll_year }} 년
+                        가입년도: <b>{{ user.enroll_year }}년</b>
                     </p>
                     <p class="libre-text mb-50">
-                        가입학기: {{ user.get_enroll_semester_display }}
+                        가입학기: <b>{{ user.get_enroll_semester_display|safe }}</b>
                     </p>
 
                 </div>
             </div>
         </div>
-    <div class="text-center">
-    <a href="{% url "accounts:user-delete"%}" class="btn btn-default">회원 탈퇴</a>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    <a href="{% url "accounts:user-update" user.id %}" class="btn btn-default">회원 정보 수정</a>
-    </div>
+        <div class="text-center">
+            <a href="{% url "accounts:user-delete"%}" class="btn btn-default">회원 탈퇴</a>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <a href="{% url "accounts:user-update" user.id %}" class="btn btn-default">회원 정보 수정</a>
+        </div>
     </section>
 
 {% endblock content %}
