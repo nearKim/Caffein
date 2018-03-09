@@ -1,0 +1,69 @@
+{% extends "index.html" %}
+{%  load crispy_forms_tags %}
+{% load static %}
+{% load imagekit %}
+
+{% block content %}
+    <section id="contact" class="contact mbr-box mbr-section mbr-section--relative mbr-section--bg-adapted">
+        <div class="container">
+            <!-- Subscribe block -->
+            <div class="col-md-6 col-sm-12 ">
+                <div class="row">
+                    <div class="profile">
+                        <h4>프로필</h4>
+                        <br>
+                        <p class="libre-text mb-50">
+                            프로필 사진
+                            {% if user.profile_pic %}
+                                {% thumbnail "300x300" user.profile_pic %}
+                            {% else %}
+                                <small>이 없네요.</small>
+                            {% endif %}
+                        </p>
+                        <p class="libre-text mb-50">
+                            이름: {{ user.name }}
+                        </p>
+                        <p class="libre-text mb-50">
+                            이메일: {{ user.email }}
+                        </p>
+                        <p class="libre-text mb-50">
+                            핸드폰: {{ user.phone }}
+                        </p>
+                        <p class="libre-text mb-50">
+                            학번: {{ user.student_no }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-offset-1 col-md-5 col-sm-12">
+                <div class="row">
+                    <br>
+                    <br>
+                    <br>
+                    <p class="libre-text mb-50">
+                        단과대: {{ user.get_college_display }}
+                    </p>
+                    <p class="libre-text mb-50">
+                        학과: {{ user.get_department_display }}
+                    </p>
+                    <p class="libre-text mb-50">
+                        분류: {{ user.get_student_category_display }}
+                    </p>
+                    <p class="libre-text mb-50">
+                        가입년도: {{ user.enroll_year }} 년
+                    </p>
+                    <p class="libre-text mb-50">
+                        가입학기: {{ user.get_enroll_semester_display }}
+                    </p>
+
+                </div>
+            </div>
+        </div>
+    <div class="text-center">
+    <a href="{% url "accounts:user-delete"%}" class="btn btn-default">회원 탈퇴</a>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href="{% url "accounts:user-update" user.id %}" class="btn btn-default">회원 정보 수정</a>
+    </div>
+    </section>
+
+{% endblock content %}
