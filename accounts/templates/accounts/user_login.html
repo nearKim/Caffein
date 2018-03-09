@@ -1,0 +1,47 @@
+{% extends "index.html" %}
+{% load crispy_forms_tags %}
+{% load static%}
+{% block content %}
+    <section class="box-intro">
+        <h1>&nbsp;</h1>
+        <h1>&nbsp;</h1>
+        <form class="form-horizontal" method="post">
+            {% csrf_token %}
+            <fieldset>
+
+                {% for field in form %}
+                    {% if field.errors %}
+                        <div class="control-group error">
+                            <label class="control-label">{{ field.label }}</label>
+                            <div class="controls">{{ field }}
+                                <span class="help-inline">
+                            {% for error in  field.errors %}{{ error }}{% endfor %}
+                        </span>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="control-group">
+                            <label class="control-label">{{ field.label }}</label>
+                            <div class="controls">{{ field }}
+                                {% if field.help_text %}
+                                    <p class="help-inline"><small>{{ field.help_text }}</small></p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </fieldset>
+            <div class="form-actions">
+                <br>
+                <button type="submit" class="btn btn-default" >로그인</button>
+            </div>
+            {#        TODO: add 회원가입 button#}
+
+        </form>
+        <small>* 신입 회원가입은 우측 상단의 메뉴를 이용해주세요.</small>
+    </section>
+
+{% endblock %}
+
+
+
