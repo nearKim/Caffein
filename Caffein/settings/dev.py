@@ -17,8 +17,10 @@ DATABASES = {
         'NAME': 'caffein',
         'USER': 'admin',
         'PASSWORD': 'winteriscoming',
-        'HOST':'localhost',
-        'PORT':'5432',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 
+# LOGIN REDIRECT URL
+LOGIN_REDIRECT_URL = 'account-redirect'

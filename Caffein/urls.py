@@ -18,6 +18,7 @@ from django.urls import path
 from django.conf.urls import include
 
 from django.conf import settings
+from accounts.views import account_redirect
 
 if not settings.configured:
     settings.configure('Caffein.settings.dev', DEBUG=True)
@@ -25,6 +26,7 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', account_redirect, name='account-redirect'),
     path('accounts/', include('accounts.urls')),
     path('postings/', include('postings.urls', namespace='postings')),
 ]
