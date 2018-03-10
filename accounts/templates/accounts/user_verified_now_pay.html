@@ -1,0 +1,21 @@
+{% extends "index.html" %}
+{% load static %}
+{% block content %}
+    <section id="user-verified" class="contact mbr-box mbr-section mbr-section--relative mbr-section--bg-adapted">
+        <div class="container">
+            {% static "welcome.jpg" %}
+            <div class="text-center">
+                <h3>이메일이 확인되었습니다.</h3>
+                <h1>{{ operation.bank_account }}
+                    {{ operation.money_account }}
+                    {{ operation.boss.name }}</h1>
+                <h3>로 {{ operation.new_pay }}원을 보내주시면 가입이 완료됩니다.</h3>
+                <h3>입금 확인이 된 후 단톡방에 초대됩니다.</h3>
+                <br>
+                <strong> !! 모집 기간이 끝날때까지 입금확인이 되지 않은 분들은 자동적으로 가입이 취소됩니다. !!</strong>
+            </div>
+            <br>
+
+        </div>
+    </section>
+{% endblock %}

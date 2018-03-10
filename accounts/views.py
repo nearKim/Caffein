@@ -8,21 +8,16 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.template import loader
 from django.template.loader import render_to_string
-from django.utils.encoding import force_bytes, force_text
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 
+from django.contrib.auth.mixins import LoginRequiredMixin
 from accounts.tokens import account_activation_token
 from core.models import OperationScheme
 from .models import User
 from django.views.generic import (
-    CreateView,
     UpdateView,
     DetailView
 )
-from .forms import (
-    SignUpForm
-
-)
+from .forms import SignUpForm
 
 
 class UserActionMixin(object):
@@ -38,15 +33,16 @@ class UserActionMixin(object):
         return super(UserActionMixin, self).form_valid(form)
 
 
-class UserUpdateView(UserActionMixin, UpdateView):
+class UserUpdateView(LoginRequiredMixin,UserActionMixin, UpdateView):
     model = User
     success_msg = "회원정보가 수정되었습니다."
 
 
-class UserDetail(DetailView):
+class UserDetail(LoginRequiredMixin, DetailView):
     model = User
 
 
+@login_required()
 def user_delete_view(request):
     template = loader.get_template('accounts/user_delete_fake.html')
     return HttpResponse(template.render(context=None, request=request))
@@ -95,6 +91,8 @@ def activate(request, uid, token):
         user.save()
         login(request, user)
         # TODO: add go to hompage url after deploy
-        return HttpResponse('이메일이 확인되었습니다. 이제 로그인이 가능합니다.')
+        os_object = OperationScheme.objects.latest('id')
+
+        return render(request, 'accounts/user_verified_now_pay.html', {'operation': os_object})
     else:
         return HttpResponse('Verification Link is invalid!')

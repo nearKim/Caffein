@@ -5,14 +5,13 @@
 
 {% block content %}
     <section id="user-detail" class="contact mbr-box mbr-section mbr-section--relative mbr-section--bg-adapted">
+        <div class="text-center">
+            <h1>프로필</h1>
+        </div>
         <div class="container">
             <!-- Subscribe block -->
-            <div class="col-md-6 col-sm-12 ">
+            <div class="col-sm-6 text-center">
                 <div class="row">
-                    <div class="profile">
-                        <div class="text-center">
-                            <h3>프로필</h3>
-                        </div>
                         <br>
                         <p class="libre-text mb-50">
                             사진 &nbsp;&nbsp;
@@ -34,14 +33,10 @@
                         <p class="libre-text mb-50">
                             학번: <b>{{ user.student_no }}</b>
                         </p>
-                    </div>
                 </div>
             </div>
-            <div class="col-md-offset-1 col-md-5 col-sm-12">
+            <div class="col-sm-6 text-center">
                 <div class="row">
-                    <br>
-                    <br>
-                    <br>
                     <br>
                     <p class="libre-text mb-50">
                         단과대: <b>{{ user.get_college_display }}</b>

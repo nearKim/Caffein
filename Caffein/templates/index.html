@@ -59,7 +59,9 @@
                 {% endif %}
                 <li><a href="#">짝모</a></li>
                 <li><a href="#">사진첩</a></li>
-                <li><a href="{% url "accounts:user-signup" %}">신규회원가입</a></li>
+                {% if request.user.is_anonymous %}
+                    <li><a href="{% url "accounts:user-signup" %}">신규회원가입</a></li>
+                {% endif %}
                 <li class="box-social"><a href="https://www.facebook.com/groups/snucaffein/"><i class="fa fa-facebook" aria-hidden="true"></i></a></li>
             </ul>
         </nav>

@@ -33,7 +33,7 @@ class OperationScheme(models.Model):
     money_account = models.CharField(max_length=20, null=False, blank=False, verbose_name='입금 계좌')
     bank_account = models.CharField(max_length=2, null=False, blank=False, choices=BANK_CATEGORY, verbose_name='입금 은행')
 
-    boss = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
+    boss = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, primary_key=False)
 
     old_pay = models.PositiveIntegerField(blank=False, null=False, verbose_name='기존 가입비')
     new_pay = models.PositiveIntegerField(blank=False, null=False, verbose_name='신입 가입비')
@@ -42,8 +42,10 @@ class OperationScheme(models.Model):
         march_second = datetime.date(year=self.current_year, month=3, day=2)
         september_first = datetime.date(year=self.current_year, month=9, day=1)
         return march_second if self.current_semester == 1 else september_first
+
     get_start_date.short_description = '회원가입 시작일'
 
     class Meta:
         verbose_name = '운영 정보'
         verbose_name_plural = '운영 정보'
+        unique_together = ['current_year', 'current_semester']
