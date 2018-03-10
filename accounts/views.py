@@ -4,6 +4,7 @@ from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMessage
+from django.db import IntegrityError
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.template import loader
@@ -12,7 +13,10 @@ from django.template.loader import render_to_string
 from django.contrib.auth.mixins import LoginRequiredMixin
 from accounts.tokens import account_activation_token
 from core.models import OperationScheme
-from .models import User
+from .models import (
+    User,
+    ActiveUser
+)
 from django.views.generic import (
     UpdateView,
     DetailView
@@ -33,7 +37,7 @@ class UserActionMixin(object):
         return super(UserActionMixin, self).form_valid(form)
 
 
-class UserUpdateView(LoginRequiredMixin,UserActionMixin, UpdateView):
+class UserUpdateView(LoginRequiredMixin, UserActionMixin, UpdateView):
     model = User
     success_msg = "회원정보가 수정되었습니다."
 
@@ -53,7 +57,7 @@ def account_index(request, user):
     return render(request, 'accounts/index.html', context={'user': user})
 
 
-def signup(request):
+def new_signup(request):
     now = datetime.date.today()
     os_object = OperationScheme.objects.latest('id')
     if now < os_object.get_start_date() or now > os_object.end_date:
@@ -96,3 +100,33 @@ def activate(request, uid, token):
         return render(request, 'accounts/user_verified_now_pay.html', {'operation': os_object})
     else:
         return HttpResponse('Verification Link is invalid!')
+
+
+@login_required()
+def old_signup(request, pk):
+    user = User.objects.get(id=pk)
+    now = datetime.date.today()
+    os_object = OperationScheme.objects.latest('id')
+    if now < os_object.get_start_date() or now > os_object.end_date:
+        return render(request, 'accounts/user_register_not_now.html')
+    if request.method == 'POST':
+        HttpResponse('FUCK!')
+    else:
+        return render(request, 'accounts/old_register.html', {'operation': os_object, 'user':user})
+
+
+@login_required()
+def old_now_pay(request, pk):
+    old_user = User.objects.get(id=pk)
+    os_object = OperationScheme.objects.latest('id')
+    try:
+        active_user = ActiveUser.objects.create(user=old_user,
+                                            active_year=os_object.current_year,
+                                            active_semester=os_object.current_semester,
+                                            is_new=False,
+                                            is_paid=False)
+    except IntegrityError:
+        return HttpResponse('이미 재가입신청 됨. 이런 페이지까지 만들기 귀찮다... 킹갓엠퍼러 콤퓨-타 공학과.. 웹개발 어케하냐 졸라힘드네 진짜.<br> 뒤로가기 누르셈ㅇㅇ')
+    active_user.save()
+
+    return render(request, 'accounts/old_user_now_pay.html', {'operation':os_object, 'user':old_user})

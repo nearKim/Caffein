@@ -1,0 +1,11 @@
+{% extends "accounts/user_verified_now_pay.html" %}
+{% block body %}
+    <div class="text-center">
+    <h4>{{ user.name }}님. 재가입 신청되었습니다.</h4>
+
+        <h1>{{ operation.bank_account }}
+            {{ operation.money_account }}
+            {{ operation.boss.name }}</h1>
+        <h3>로 {{ operation.old_pay }}원을 보내주시면 가입이 완료됩니다.</h3>
+    </div>
+{% endblock body %}

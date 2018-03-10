@@ -6,8 +6,11 @@ from .views import *
 app_name = 'accounts'
 
 urlpatterns = [
-    path('signup/', signup, name='user-signup'),
-    path('activate/<int:uid>/<slug:token>/',activate, name='user-activate'),
+    path('signup/', new_signup, name='new-signup'),
+    path('activate/<int:uid>/<slug:token>/', activate, name='user-activate'),
+
+    path('<int:pk>/signup-old/', old_signup, name='old-signup'),
+    path('<int:pk>/paynow/', old_now_pay, name='old-activate'),
 
     path('<int:pk>/profile/', UserDetail.as_view(), name='user-detail'),
     path('<int:pk>/update/', UserUpdateView.as_view(), name='user-update'),
