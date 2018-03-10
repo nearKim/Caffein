@@ -54,14 +54,12 @@
                 <li class="box-label">Caffe人</li>
                 {#FIXME: fix urls#}
                 <li><a href="{% url "index" %}">메인으로</a> <i class="lnr lnr-home"></i></li>
-                {% if user %}
+                {% if not request.user.is_anonymous %}
                     <li><a href="{% url "accounts:user-detail" user.id%}">나의 프로필</a></li>
-                {% else %}
-                    <li><a href="{% url "login"%}">로그인</a></li>
                 {% endif %}
                 <li><a href="#">짝모</a></li>
                 <li><a href="#">사진첩</a></li>
-                <li><a href="#">신규회원가입</a></li>
+                <li><a href="{% url "accounts:user-signup" %}">신규회원가입</a></li>
                 <li class="box-social"><a href="https://www.facebook.com/groups/snucaffein/"><i class="fa fa-facebook" aria-hidden="true"></i></a></li>
             </ul>
         </nav>
@@ -83,7 +81,7 @@
             <br>
             <br>
             {#TODO: add 회원가입 button#}
-            <a href="{% url "accounts:user-login" %}" class="btn btn-default btn-lg" role="button">로그인</a>
+            <a href="{% url "login" %}" class="btn btn-default btn-lg" role="button">로그인</a>
         </div>
         {#            <div class="mouse">#}
         {#                <div class="scroll"></div>#}
@@ -112,28 +110,28 @@
                 <div class="col-xs-12 col-lg-3 col-md-3">
                     <div class="count-item">
                         <i class="lnr lnr-users"></i>
-                        <div class="numscroller" data-slno='1' data-min='0' data-max='4444' data-delay='10' data-increment="10">700</div>
+                        <div class="numscroller" data-slno='1' data-min='0' data-max='700' data-delay='10' data-increment="10">700</div>
                         <div class="count-name-intro">함께한 사람들</div>
                     </div>
                 </div>
                 <div class="col-xs-12  col-lg-3 col-md-3">
                     <div class="count-item">
                         <i class="lnr lnr-bubble"></i>
-                        <div class="numscroller" data-slno='1' data-min='0' data-max='1111' data-delay='10' data-increment="5">200</div>
+                        <div class="numscroller" data-slno='1' data-min='0' data-max='200' data-delay='10' data-increment="5">200</div>
                         <div class="count-name-intro">커피 모임</div>
                     </div>
                 </div>
                 <div class="col-xs-12 col-lg-3 col-md-3">
                     <div class="count-item">
                         <i class="lnr lnr-camera"></i>
-                        <div class="numscroller" data-slno='1' data-min='0' data-max='4444' data-delay='10' data-increment="10">1000</div>
+                        <div class="numscroller" data-slno='1' data-min='0' data-max='1000' data-delay='10' data-increment="5">1000</div>
                         <div class="count-name-intro">사진</div>
                     </div>
                 </div>
                 <div class="col-xs-12  col-lg-3 col-md-3">
                     <div class="count-item">
                         <i class="lnr lnr-coffee-cup"></i>
-                        <div class="numscroller" data-slno='1' data-min='0' data-max='1555' data-delay='10' data-increment="5">99999</div>
+                        <div class="numscroller" data-slno='1' data-min='0' data-max='99999' data-delay='10' data-increment="10">99999</div>
                         <div class="count-name-intro">그리고 셀수없는 커피들</div>
                     </div>
                 </div>
@@ -657,38 +655,14 @@
             <!-- Start Contact Widget -->
             <div class="col-md-6 col-xs-12">
                 <div class="footer-widget contact-widget">
-                    <img src="assets/img/footerlogo.png" class="logo-footer img-responsive" alt="Footer Logo" />
+                    <img src="{% static "assets/img/footerlogo.png" %}" class="logo-footer img-responsive" alt="Footer Logo" />
                     <p>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident</p>
                     <ul class="social-icons">
                         <li>
                             <a class="facebook" href="#"><i class="fa fa-facebook"></i></a>
                         </li>
                         <li>
-                            <a class="twitter" href="#"><i class="fa fa-twitter"></i></a>
-                        </li>
-                        <li>
-                            <a class="google" href="#"><i class="fa fa-google-plus"></i></a>
-                        </li>
-                        <li>
-                            <a class="dribbble" href="#"><i class="fa fa-dribbble"></i></a>
-                        </li>
-                        <li>
-                            <a class="linkdin" href="#"><i class="fa fa-linkedin"></i></a>
-                        </li>
-                        <li>
-                            <a class="flickr" href="#"><i class="fa fa-flickr"></i></a>
-                        </li>
-                        <li>
-                            <a class="tumblr" href="#"><i class="fa fa-tumblr"></i></a>
-                        </li>
-                        <li>
                             <a class="instgram" href="#"><i class="fa fa-instagram"></i></a>
-                        </li>
-                        <li>
-                            <a class="vimeo" href="#"><i class="fa fa-vimeo-square"></i></a>
-                        </li>
-                        <li>
-                            <a class="skype" href="#"><i class="fa fa-skype"></i></a>
                         </li>
                     </ul>
                 </div>

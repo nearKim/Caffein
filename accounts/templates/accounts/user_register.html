@@ -1,0 +1,25 @@
+{% extends "index.html" %}
+{% load crispy_forms_tags %}
+{% load static%}
+{% block content %}
+    <section id="user-register" class="contact mbr-box mbr-section mbr-section--relative mbr-section--bg-adapted">
+        <div class="container">
+            <div class="text-center">
+                <h1>신규 회원가입</h1>
+            </div>
+            <br>
+            <div class="libre-text mb-50">
+                <p>다음은 서울대학교 중앙 커피동아리 카페인의 가입약관입니다.</p>
+                <a href="http://www.google.com" class="gray-btn">약관보기</a>
+            </div>
+            <p class="libre-text"><strong>본인은 가입약관을 모두 읽었음을 확인하며 전체 약관에 동의합니다.</strong></p>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <div class="text-center">
+                    <input type="submit" class="btn btn-default" value="제출"/>
+                </div>
+            </form>
+        </div>
+    </section>
+{% endblock %}

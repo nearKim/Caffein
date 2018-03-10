@@ -1,3 +1,4 @@
+import datetime
 from django.db import models
 from django.conf import settings
 from django.utils.timezone import now
@@ -22,14 +23,26 @@ class OperationScheme(models.Model):
     current_year = models.PositiveIntegerField(null=False, blank=False, default=now().year, verbose_name='현재 년도')
     current_semester = models.PositiveIntegerField(null=False, blank=False, default=True, choices=SEMESTER_CATEGORY,
                                                    verbose_name='현재 학기')
+    end_date = models.DateField(null=False, blank=False, verbose_name='가입마감일')
+
     max_newcomers = models.PositiveIntegerField(null=False, blank=False, verbose_name='최대 신입수')
+
     partner_open_date = models.DateField(null=True, blank=True, verbose_name='짝지 시작일')
     partner_close_date = models.DateField(null=True, blank=True, verbose_name='짝지 마감일')
+
     money_account = models.CharField(max_length=20, null=False, blank=False, verbose_name='입금 계좌')
     bank_account = models.CharField(max_length=2, null=False, blank=False, choices=BANK_CATEGORY, verbose_name='입금 은행')
+
     boss = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
-    old_dues = models.PositiveIntegerField(blank=False, null=False, verbose_name='기존 가입비')
-    new_dues = models.PositiveIntegerField(blank=False, null=False, verbose_name='신입 가입비')
+
+    old_pay = models.PositiveIntegerField(blank=False, null=False, verbose_name='기존 가입비')
+    new_pay = models.PositiveIntegerField(blank=False, null=False, verbose_name='신입 가입비')
+
+    def get_start_date(self):
+        march_second = datetime.date(year=self.current_year, month=3, day=2)
+        september_first = datetime.date(year=self.current_year, month=9, day=1)
+        return march_second if self.current_semester == 1 else september_first
+    get_start_date.short_description = '회원가입 시작일'
 
     class Meta:
         verbose_name = '운영 정보'

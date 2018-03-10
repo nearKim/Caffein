@@ -6,4 +6,4 @@ def index(request):
     if request.user.is_authenticated:
         return account_index(request, request.user)
     else:
-        return render(request, 'assets/index.html')
+        return render(request, 'index.html')

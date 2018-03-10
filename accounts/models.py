@@ -115,6 +115,10 @@ class User(AbstractBaseUser, PermissionsMixin):
                                       processors=[Thumbnail(100,100)],
                                       format='JPEG',
                                       options={'quality':60})
+    rule_confirm = models.BooleanField(default=False,
+                                       null=False,
+                                       blank=False,
+                                       verbose_name='약관동의')
 
     date_joined = models.DateTimeField(_('가입일'), auto_now_add=True)
 
