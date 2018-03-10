@@ -38,11 +38,6 @@ class UserActionMixin(object):
         return super(UserActionMixin, self).form_valid(form)
 
 
-class UserCreateView(UserActionMixin, CreateView):
-    model = User
-    success_msg = "회원가입이 완료되었습니다."
-
-
 class UserUpdateView(UserActionMixin, UpdateView):
     model = User
     success_msg = "회원정보가 수정되었습니다."
@@ -78,7 +73,7 @@ def signup(request):
             mail_content = render_to_string('accounts/acc_active_email.html', {
                 'user': user,
                 'domain': current_site.domain,
-                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                'uid': user.id,
                 'token': account_activation_token.make_token(user),
             })
             to_email = form.cleaned_data.get('email')
@@ -90,16 +85,16 @@ def signup(request):
     return render(request, 'accounts/user_register.html', {'form': form})
 
 
-def activate(request, uidb64, token):
+def activate(request, uid, token):
     try:
-        uid = force_text(urlsafe_base64_decode(uidb64))
-        user = User.objects.get(pk=uid)
+        user = User.objects.get(id=uid)
     except(TypeError, ValueError, OverflowError, User.DoesNotExist):
         user = None
     if user is not None and account_activation_token.check_token(user, token):
         user.is_active = True
         user.save()
         login(request, user)
-        return HttpResponse('이메일이 확인되었습니다. 감사합니다.')
+        # TODO: add go to hompage url after deploy
+        return HttpResponse('이메일이 확인되었습니다. 이제 로그인이 가능합니다.')
     else:
         return HttpResponse('Verification Link is invalid!')

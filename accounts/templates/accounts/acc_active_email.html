@@ -1,5 +1,7 @@
-안녕하세요. {{ user.username }} 님.
+
+{% autoescape off %}
+안녕하세요. {{ user.name }} 님.
 이메일 인증을 완료하려면 아래 url을 클릭하세요.
 
-{#    TODO: Make below url work#}
-{#http://{{ domain }}{% url 'accounts:user-activate' uidb64=uid token=token %}#}
+http://{{ domain }}{% url 'accounts:user-activate' uid=uid token=token%}
+{% endautoescape %}

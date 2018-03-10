@@ -54,5 +54,4 @@ class SignUpForm(UserCreationForm):
     class Meta:
         model = User
         fields = ['rule_confirm', 'email', 'password1', 'password2', 'name', 'phone', 'student_no', 'college',
-                  'department',
-                  'student_category', 'enroll_year', 'enroll_semester', 'profile_pic']
+                  'department', 'student_category', 'enroll_year', 'enroll_semester', 'profile_pic']
