@@ -1,11 +1,7 @@
 from django import forms
-from django.views.generic import FormView
-from django.views.generic.detail import SingleObjectMixin
 
 from .models import (
     User,
-    Partners,
-    ActiveUser
 )
 
 

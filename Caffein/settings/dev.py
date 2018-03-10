@@ -22,5 +22,4 @@ DATABASES = {
     }
 }
 
-# LOGIN REDIRECT URL
-LOGIN_REDIRECT_URL = 'account-redirect'
+LOGIN_URL = '/login'

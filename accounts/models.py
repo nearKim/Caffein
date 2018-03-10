@@ -76,7 +76,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(_('이메일'),
                               unique=True,
                               validators=[snumail_validator],
-                              help_text='서울대학교 이메일을 입력해주세요')
+                              help_text='snu.ac.kr 계정 메일을 입력해주세요')
     name = models.CharField(_('이름'), max_length=30)
     phone = models.CharField(_('휴대폰번호'), max_length=20,
                              validators=[phone_validator],

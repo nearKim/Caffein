@@ -19,12 +19,12 @@
         <br>
         <div class="container">
             <div class="col-md-4 col-md-offset-4">
-                <form class="form-horizontal" method="post" action="{% url 'accounts:user-login' %}">
+                <form class="form-horizontal" method="post" action="{% url 'login' %}">
                     {% csrf_token %}
                     {{ form | crispy }}
                     <div class="text-center">
                         <input type="submit" class="btn btn-default" value="로그인">
-                        <input type="hidden" name="next" value={% url 'accounts:user-detail' user.id %}>
+                        <input type="hidden" name="next" value={% url 'index' %}>
                         <p>
                             <small>* 신입 회원가입은 우측 상단의 메뉴를 이용해주세요.</small>
                         </p>

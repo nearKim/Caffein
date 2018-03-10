@@ -18,7 +18,7 @@ from django.urls import path
 from django.conf.urls import include
 
 from django.conf import settings
-
+from django.contrib.auth import views as auth_views
 if not settings.configured:
     settings.configure('Caffein.settings.dev', DEBUG=True)
 from django.conf.urls.static import static
@@ -26,6 +26,7 @@ from core import views as core_views
 
 urlpatterns = [
     path('', core_views.index, name='index'),
+    path('login/', auth_views.LoginView.as_view(template_name='accounts/user_login.html'), name='login'),
     path('admin/', admin.site.urls, name='admin'),
     path('accounts/', include('accounts.urls', namespace='accounts')),
     path('postings/', include('postings.urls', namespace='postings')),

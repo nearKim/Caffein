@@ -1,6 +1,8 @@
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.template import loader
 from django.urls import reverse_lazy
 from .models import User
 from django.views.generic import (
@@ -9,7 +11,11 @@ from django.views.generic import (
     UpdateView,
     DetailView
 )
-from .forms import UserForm
+from .forms import (
+    UserForm,
+
+)
+from django.contrib.auth import authenticate, login
 
 
 class UserActionMixin(object):
@@ -35,10 +41,15 @@ class UserUpdateView(UserActionMixin, UpdateView):
     success_msg = "회원정보가 수정되었습니다."
 
 
-def user_delete_view(request, pk):
-    return HttpResponse("들어올땐 마음대로였지만 나갈땐 아니란다.")
-
-
 class UserDetail(DetailView):
     model = User
 
+
+def user_delete_view(request):
+    template = loader.get_template('accounts/user_delete_fake.html')
+    return HttpResponse(template.render(context=None, request=request))
+
+
+@login_required()
+def account_index(request, user):
+    return render(request, 'accounts/index.html', context={'user': user})

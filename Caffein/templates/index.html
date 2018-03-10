@@ -38,7 +38,7 @@
         <div class="box-header">
             <div class="box-logo">
                 {#FIXME: fix Logo.png#}
-                <a href="index.html"><img src="{% static "assets/img/logo.png" %}" width="80" alt="Logo"></a>
+                <a href="{% url "index" %}"><img src="{% static "assets/img/logo.png" %}" width="80" alt="Logo"></a>
             </div>
             <!-- box-nav -->
             <a class="box-primary-nav-trigger" href="#0">
@@ -53,39 +53,43 @@
             <ul class="box-primary-nav">
                 <li class="box-label">Caffe人</li>
                 {#FIXME: fix urls#}
-                <li><a href="index.html">메인으로</a> <i class="lnr lnr-home"></i></li>
-                <li><a href="services.html">카페인이란?</a></li>
-                <li><a href="single-project.html">사진첩</a></li>
-                <li><a href="contact.html">회원가입</a></li>
+                <li><a href="{% url "index" %}">메인으로</a> <i class="lnr lnr-home"></i></li>
+                {% if user %}
+                    <li><a href="{% url "accounts:user-detail" user.id%}">나의 프로필</a></li>
+                {% else %}
+                    <li><a href="{% url "login"%}">로그인</a></li>
+                {% endif %}
+                <li><a href="#">짝모</a></li>
+                <li><a href="#">사진첩</a></li>
+                <li><a href="#">신규회원가입</a></li>
                 <li class="box-social"><a href="https://www.facebook.com/groups/snucaffein/"><i class="fa fa-facebook" aria-hidden="true"></i></a></li>
             </ul>
         </nav>
         <!-- end nav -->
-        <!-- box-intro -->
-        <section class="box-intro">
-            <div class="table-cell">
+    </div>
+</header>
+{% block content %}
+    <section class="box-intro">
+        <div class="table-cell">
 
-                <h3 class="box-headline letters rotate-2">
+            <h3 class="box-headline letters rotate-2">
 										<span class="box-words-wrapper">
 												<b class="is-visible">서울대학교&nbsp; 커피동아리.</b>
 												<b>COFFEE&amp;DESSERT.</b>
 										</span>
-                </h3>
-                <h1>카페인</h1>
-                <br>
-                <br>
-                <br>
-                {#TODO: add 회원가입 button#}
-                <a href="{% url "accounts:user-login" %}" class="btn btn-default btn-lg" role="button">로그인</a>
-            </div>
-            <div class="mouse">
-                <div class="scroll"></div>
-            </div>
-        </section>
-        <!-- end box-intro -->
-    </div>
-</header>
-{% block content %}
+            </h3>
+            <h1>카페인</h1>
+            <br>
+            <br>
+            <br>
+            {#TODO: add 회원가입 button#}
+            <a href="{% url "accounts:user-login" %}" class="btn btn-default btn-lg" role="button">로그인</a>
+        </div>
+        {#            <div class="mouse">#}
+        {#                <div class="scroll"></div>#}
+        {#            </div>#}
+    </section>
+
     <!-- INTRODUCTION-->
     <section id="about" class="about mt-150 mb-50">
         <div class="container">
