@@ -183,25 +183,3 @@ class ActiveUser(TimeStampedModelMixin):
         verbose_name = '활동 회원'
         verbose_name_plural = '활동 회원'
 
-
-class Partners(TimeStampedModelMixin):
-    partner_year = models.PositiveIntegerField(default=now().year,
-                                               null=False,
-                                               blank=False,
-                                               verbose_name='짝지 년도')
-    partner_semester = models.PositiveIntegerField(choices=SEMESTER_CATEGORY,
-                                                   null=False,
-                                                   blank=False,
-                                                   verbose_name='짝지 학기')
-    old_partner = models.OneToOneField(ActiveUser,
-                                       on_delete=models.CASCADE,
-                                       verbose_name='위짝지',
-                                       related_name='old_partner')
-    new_partner = ArrayField(models.PositiveIntegerField(),
-                             size=3,
-                             verbose_name='아래짝지')
-    score = models.PositiveIntegerField(default=0, verbose_name='점수')
-
-    class Meta:
-        verbose_name = '짝지'
-        verbose_name_plural = '짝지'

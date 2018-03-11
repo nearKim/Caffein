@@ -1,9 +1,10 @@
 from django.contrib import admin
 from django.utils.timezone import now
+
+from partners.models import Partners
 from .models import (
     User,
     ActiveUser,
-    Partners
 )
 
 current_year = now().year
@@ -87,20 +88,8 @@ class ActiveUserAdmin(admin.ModelAdmin):
     make_partners.short_description = '짝지로 만들기'
 
 
-class PartnerAdmin(admin.ModelAdmin):
-    list_display = ['partner_year', 'partner_semester', 'get_old', 'get_new', 'score']
-    list_filter = ['partner_year', 'partner_semester', 'old_partner']
-    ordering = ['-partner_year', '-partner_semester', '-score']
-
-    def get_old(self, queryset):
-        return queryset.old_partner.user.name
-    get_old.short_description = '위짝지'
-
-    def get_new(self, queryset):
-        return [User.objects.get(id=pk).name for pk in queryset.new_partner]
-    get_new.short_description = '아래짝지'
 
 
 admin.site.register(User, UserAdmin)
 admin.site.register(ActiveUser, ActiveUserAdmin)
-admin.site.register(Partners, PartnerAdmin)
+

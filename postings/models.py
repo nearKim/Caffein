@@ -39,7 +39,7 @@ class Meeting(Post):
     people_number = models.PositiveIntegerField(default=1, null=False, blank=False, verbose_name='참석 인원')
     participants = ArrayField(models.PositiveIntegerField(), validators=[participant_validator, ], verbose_name='참석자')
     participants_backup = ArrayField(models.PositiveIntegerField(), verbose_name='예비 인원')
-    meeting_date = models.DateTimeField(null=False, blank=False, verbose_name='모임 일시')
+    meeting_date = models.DateField(null=False, blank=False, verbose_name='모임 일시')
 
     class Meta:
         abstract = True
