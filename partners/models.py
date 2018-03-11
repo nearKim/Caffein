@@ -23,9 +23,9 @@ class Partners(TimeStampedModelMixin):
                                                    blank=False,
                                                    verbose_name='짝지 학기')
     old_partner = models.ForeignKey(ActiveUser,
-                                       on_delete=models.CASCADE,
-                                       verbose_name='위짝지',
-                                       related_name='old_partner')
+                                    on_delete=models.CASCADE,
+                                    verbose_name='위짝지',
+                                    related_name='old_partner')
     new_partner = models.OneToOneField(ActiveUser,
                                        on_delete=models.CASCADE,
                                        verbose_name='아래짝지',

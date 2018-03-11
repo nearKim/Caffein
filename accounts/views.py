@@ -60,7 +60,7 @@ def account_index(request, user):
 def new_signup(request):
     now = datetime.date.today()
     os_object = OperationScheme.objects.latest('id')
-    if now < os_object.get_start_date() or now > os_object.end_date:
+    if now < os_object.new_register_start() or now > os_object.new_register_end:
         return render(request, 'accounts/user_register_not_now.html')
     if request.method == 'POST':
         form = SignUpForm(request.POST)
@@ -107,26 +107,39 @@ def old_signup(request, pk):
     user = User.objects.get(id=pk)
     now = datetime.date.today()
     os_object = OperationScheme.objects.latest('id')
-    if now < os_object.get_start_date() or now > os_object.end_date:
+    if now < os_object.old_register_start or now > os_object.old_register_end:
         return render(request, 'accounts/user_register_not_now.html')
     if request.method == 'POST':
-        HttpResponse('FUCK!')
+        HttpResponse('Bad Request.')
     else:
-        return render(request, 'accounts/old_register.html', {'operation': os_object, 'user':user})
+        return render(request, 'accounts/old_register.html', {'operation': os_object, 'user': user})
 
 
 @login_required()
 def old_now_pay(request, pk):
     old_user = User.objects.get(id=pk)
-    os_object = OperationScheme.objects.latest('id')
-    try:
-        active_user = ActiveUser.objects.create(user=old_user,
-                                            active_year=os_object.current_year,
-                                            active_semester=os_object.current_semester,
-                                            is_new=False,
-                                            is_paid=False)
-    except IntegrityError:
-        return HttpResponse('이미 재가입신청 됨. 이런 페이지까지 만들기 귀찮다... 킹갓엠퍼러 콤퓨-타 공학과.. 웹개발 어케하냐 졸라힘드네 진짜.<br> 뒤로가기 누르셈ㅇㅇ')
-    active_user.save()
+    current_os = OperationScheme.get_os_now()
+    latest_os = OperationScheme.get_latest_os()
+    # os_object = OperationScheme.objects.latest('id')
+    if current_os.old_register_start is None or current_os.old_register_end is None:
+        # Boss didn't input old register start date
+        return HttpResponse('운영진이 기존 회원 재가입 기간을 아직 입력하지 않았습니다.')
+    elif datetime.date.today() < current_os.old_register_start or datetime.date.today() > current_os.old_register_end:
+        return HttpResponse('재가입 신청기간이 아닙니다.')
+    elif latest_os.id == current_os.id:
+        return HttpResponse("운영진이 아직 다음 학기 운영 스키마를 작성하지 않았습니다.")
+    else:
+        try:
+            active_user = ActiveUser.objects.create(user=old_user,
+                                                    active_year=latest_os.current_year,
+                                                    active_semester=latest_os.current_semester,
+                                                    is_new=False,
+                                                    is_paid=False)
+        except IntegrityError:
+            return HttpResponse('이미 재가입신청 됨. 이런 페이지까지 만들기 귀찮다... 킹갓엠퍼러 콤퓨-타 공학과.. 웹개발 어케하냐 졸라힘드네 진짜.<br> 뒤로가기 누르셈ㅇㅇ')
+        active_user.save()
 
-    return render(request, 'accounts/old_user_now_pay.html', {'operation':os_object, 'user':old_user})
+    return render(request, 'accounts/old_user_now_pay.html', {'operation': current_os, 'user': old_user})
+
+
+

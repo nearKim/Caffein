@@ -23,11 +23,15 @@ class OperationScheme(models.Model):
     current_year = models.PositiveIntegerField(null=False, blank=False, default=now().year, verbose_name='현재 년도')
     current_semester = models.PositiveIntegerField(null=False, blank=False, default=True, choices=SEMESTER_CATEGORY,
                                                    verbose_name='현재 학기')
-    end_date = models.DateField(null=False, blank=False, verbose_name='가입마감일')
+    old_register_start = models.DateField(null=True, blank=True, verbose_name="기존회원 재가입 시작일")
+    old_register_end = models.DateField(null=True, blank=True, verbose_name="기존회원 재가입 마감일")
+
+    new_register_end = models.DateField(null=False, blank=False, verbose_name='신입회원 가입마감일')
 
     max_newcomers = models.PositiveIntegerField(null=False, blank=False, verbose_name='최대 신입수')
 
-    partner_open_date = models.DateField(null=True, blank=True, verbose_name='짝지 시작일')
+    # This field is not needed hence right when a partner is confirmed, it should be opened immediately
+    # partner_open_date = models.DateField(null=True, blank=True, verbose_name='짝지 시작일')
     partner_close_date = models.DateField(null=True, blank=True, verbose_name='짝지 마감일')
 
     money_account = models.CharField(max_length=20, null=False, blank=False, verbose_name='입금 계좌')
@@ -38,12 +42,31 @@ class OperationScheme(models.Model):
     old_pay = models.PositiveIntegerField(blank=False, null=False, verbose_name='기존 가입비')
     new_pay = models.PositiveIntegerField(blank=False, null=False, verbose_name='신입 가입비')
 
-    def get_start_date(self):
+    def new_register_start(self):
         march_second = datetime.date(year=self.current_year, month=3, day=2)
         september_first = datetime.date(year=self.current_year, month=9, day=1)
         return march_second if self.current_semester == 1 else september_first
 
-    get_start_date.short_description = '회원가입 시작일'
+    new_register_start.short_description = '신입회원 가입시작일'
+
+    def get_os_now(self):
+        """
+        :return: OperatingScheme which designates current time. Probably not the latest one.
+        """
+        current_year = datetime.date.today().year
+        current_semester = 1 if datetime.date.today().month in range(3, 9) else 2
+        os1 = self.objects.filter(current_year=current_year)
+        os2 = self.objects.filter(current_semester=current_semester)
+        os_object = os1.intersection(os2)
+        if not os_object.count() == 1:
+            raise ValueError('Operating table이 이상합니다. 관리자 계정에서 꼭 확인하세요!')
+        return os_object.first()
+
+    def get_latest_os(self):
+        """
+        :return: The latest OperatingScheme
+        """
+        return self.objects.latest('id')
 
     class Meta:
         verbose_name = '운영 정보'

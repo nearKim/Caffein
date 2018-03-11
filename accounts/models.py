@@ -150,7 +150,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         for department in DEPARTMENT_CATEGORY:
             if department[0] == self.department:
                 dep_string = department[1]
-        return dep_string + " " + self.name
+        return str(dep_string) + " " + self.name
 
     def get_full_name(self):
         '''

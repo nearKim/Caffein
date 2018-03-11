@@ -28,18 +28,21 @@ class UserAdmin(admin.ModelAdmin):
         """
 
         for user in queryset:
-            if user.enroll_year == current_year and user.enroll_semester == current_semester:
-                new_active_user = ActiveUser.objects.create(user=user,
-                                                            is_new=True,
-                                                            active_year=current_year,
-                                                            active_semester=current_semester)
-                new_active_user.save()
-            else:
-                old_active_user = ActiveUser.objects.create(user=user,
-                                                            is_new=False,
-                                                            active_year=current_year,
-                                                            active_semester=current_semester)
-                old_active_user.save()
+            try:
+                if user.enroll_year == current_year and user.enroll_semester == current_semester:
+                    new_active_user = ActiveUser.objects.create(user=user,
+                                                                is_new=True,
+                                                                active_year=current_year,
+                                                                active_semester=current_semester)
+                    new_active_user.save()
+                else:
+                    old_active_user = ActiveUser.objects.create(user=user,
+                                                                is_new=False,
+                                                                active_year=current_year,
+                                                                active_semester=current_semester)
+                    old_active_user.save()
+            except IntegrityError:
+                continue
         self.message_user(request, "성공적으로 추가되었습니다.")
 
     make_active_user.short_description = '활동회원으로 추가'

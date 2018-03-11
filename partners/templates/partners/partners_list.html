@@ -1,0 +1,28 @@
+{% extends "index.html" %}
+{% block content %}
+    <section class="box-intro">
+        <div class="table-cell text-center" >
+            <h2>{{ user.name }}님의 짝지 현황</h2>
+            <br>
+            <h4>{{ now|date }}까지 짝지 점수</h4>
+            <h1>{{ score }}점</h1>
+            <br>
+            <h1>위짝지</h1>
+            <br>
+            <h4>{{ old_user.get_department_display }}&ensp;{{ old_user.name }} </h4>
+            <h4>&ensp;전화번호: {{ old_user.phone }} </h4>
+            <br>
+            <h1>아래짝지</h1>
+            <br>
+            <h4>
+                {% for partner in partners_list %}
+                    {{ partner.new_partner }}&ensp;
+                    전화번호: {{ partner.new_partner.user.phone}}&ensp;
+                    <br>
+                    <br>
+                {% endfor %}
+            </h4>
+            <br>
+        </div>
+    </section>
+{% endblock %}
