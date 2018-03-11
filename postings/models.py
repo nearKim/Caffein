@@ -5,6 +5,8 @@ from django.conf import settings
 from django.utils.text import slugify
 from datetime import datetime
 import os
+
+from accounts.models import ActiveUser
 from core.mixins import PostableMixin
 from cafe.models import Cafe
 
@@ -31,14 +33,8 @@ class Photo(models.Model):
 
 
 class Meeting(Post):
-
-    def participant_validator(self):
-        if len(self.participants) > self.people_number:
-            raise ValidationError('참석 인원을 초과하였습니다.')
-
     people_number = models.PositiveIntegerField(default=1, null=False, blank=False, verbose_name='참석 인원')
-    participants = ArrayField(models.PositiveIntegerField(), validators=[participant_validator, ], verbose_name='참석자')
-    participants_backup = ArrayField(models.PositiveIntegerField(), verbose_name='예비 인원')
+    participants = models.ForeignKey(ActiveUser, on_delete=models.PROTECT, verbose_name='참석자')
     meeting_date = models.DateField(null=False, blank=False, verbose_name='모임 일시')
 
     class Meta:

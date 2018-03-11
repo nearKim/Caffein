@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django.db import IntegrityError
+from django.http import HttpResponse
 from django.utils.timezone import now
 
 from partners.models import Partners
@@ -12,12 +14,12 @@ current_semester = 1 if now().month in range(3, 9) else 2
 
 
 class UserAdmin(admin.ModelAdmin):
-    list_display = ['id','email', 'name', 'phone', 'student_no', 'college', 'department',
+    list_display = ['id', 'email', 'name', 'phone', 'student_no', 'college', 'department',
                     'student_category', 'enroll_year', 'enroll_semester']
     actions = ['make_active_user', ]
     search_fields = ['name', 'email', 'phone']
     list_filter = ('college', 'department', 'student_category', 'enroll_year', 'enroll_semester')
-    list_display_links = ['name']
+    list_display_links = ['email']
 
     def make_active_user(self, request, queryset):
         """
@@ -75,21 +77,22 @@ class ActiveUserAdmin(admin.ModelAdmin):
             return NotImplemented
 
         old_member = queryset.get(is_new=False)
-        new_members = queryset.filter(is_new=True).values_list('user', flat=True)
-        partner = Partners.objects.create(partner_year=current_year,
-                                          partner_semester=current_semester,
-                                          old_partner=old_member,
-                                          new_partner=list(new_members))
-        partner.save()
-        self.message_user(request, "짝지가 생성 되었습니다.")
+        new_members = queryset.filter(is_new=True)
+        for new_member in new_members:
+            try:
+                partner = Partners.objects.create(partner_year=current_year,
+                                                  partner_semester=current_semester,
+                                                  old_partner=old_member,
+                                                  new_partner=new_member)
+            except IntegrityError:
+                HttpResponse("이미 아래짝지가 배정된 것 같네요.")
+            partner.save()
+            self.message_user(request, "짝지가 생성 되었습니다.")
 
     paid_check.short_description = '입금확인'
     unpaid_check.short_description = '입금확인 취소'
     make_partners.short_description = '짝지로 만들기'
 
 
-
-
 admin.site.register(User, UserAdmin)
 admin.site.register(ActiveUser, ActiveUserAdmin)
-

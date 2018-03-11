@@ -112,9 +112,9 @@ class User(AbstractBaseUser, PermissionsMixin):
                                                   blank=False)
     profile_pic = ProcessedImageField(blank=True,
                                       upload_to=get_profile_path,
-                                      processors=[Thumbnail(100,100)],
+                                      processors=[Thumbnail(100, 100)],
                                       format='JPEG',
-                                      options={'quality':60})
+                                      options={'quality': 60})
     rule_confirm = models.BooleanField(default=False,
                                        null=False,
                                        blank=False,
@@ -144,6 +144,13 @@ class User(AbstractBaseUser, PermissionsMixin):
     class Meta:
         verbose_name = _('회원')
         verbose_name_plural = _('회원')
+
+    def __str__(self):
+        dep_string = None  # Control Null value
+        for department in DEPARTMENT_CATEGORY:
+            if department[0] == self.department:
+                dep_string = department[1]
+        return dep_string + " " + self.name
 
     def get_full_name(self):
         '''
@@ -175,7 +182,7 @@ class ActiveUser(TimeStampedModelMixin):
                                                   null=False,
                                                   blank=False,
                                                   verbose_name='활동학기')
-    is_new = models.BooleanField(default=False, blank=False,null=False, verbose_name='신입회원여부')
+    is_new = models.BooleanField(default=False, blank=False, null=False, verbose_name='신입회원여부')
     is_paid = models.BooleanField(default=False, blank=False, null=False, verbose_name='입금확인')
 
     class Meta:
@@ -183,3 +190,5 @@ class ActiveUser(TimeStampedModelMixin):
         verbose_name = '활동 회원'
         verbose_name_plural = '활동 회원'
 
+    def __str__(self):
+        return self.user.__str__()

@@ -14,7 +14,7 @@ class PartnerAdmin(admin.ModelAdmin):
     get_old.short_description = '위짝지'
 
     def get_new(self, queryset):
-        return [User.objects.get(id=pk).name for pk in queryset.new_partner]
+        return queryset.new_partner.user.name
     get_new.short_description = '아래짝지'
 
 
