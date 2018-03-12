@@ -16,8 +16,8 @@ def validate_list(value):
 
 
 class Survey(models.Model):
-    survey_year = models.PositiveIntegerField(null=False, blank=False)
-    survey_semester = models.PositiveIntegerField(choices=SEMESTER_CATEGORY, blank=False, null=False)
+    survey_year = models.PositiveIntegerField(null=False, blank=False, verbose_name='설문 년도')
+    survey_semester = models.PositiveIntegerField(choices=SEMESTER_CATEGORY, blank=False, null=False, verbose_name='설문 학기')
 
     def questions(self):
         if self.pk:
@@ -40,23 +40,22 @@ class Question(TimeStampedModelMixin):
     INTEGER = 'integer'
 
     QUESTION_TYPES = (
-        (TEXT, 'text'),
-        (RADIO, 'radio'),
-        (SELECT, 'select'),
-        (SELECT_MULTIPLE, 'Select Multiple'),
-        (INTEGER, 'integer'),
+        (TEXT, '텍스트'),
+        (RADIO, '라디오버튼'),
+        (SELECT, '선택형'),
+        (SELECT_MULTIPLE, '다중선택형'),
+        (INTEGER, '숫자형'),
     )
 
     survey = models.ForeignKey(Survey, on_delete=models.PROTECT)
-    text = models.CharField(max_length=200, blank=False, null=False)
-    required = models.BooleanField(default=True)
+    text = models.CharField(max_length=200, blank=False, null=False, verbose_name='설문 내용')
+    required = models.BooleanField(default=True, verbose_name='필수 여부')
     category = models.ForeignKey(Category, blank=True, null=True, on_delete=models.SET_NULL)
 
-    question_type = models.CharField(max_length=200, choices=QUESTION_TYPES, default=TEXT)
+    question_type = models.CharField(max_length=200, choices=QUESTION_TYPES, default=TEXT, verbose_name='질문종류')
     # the choices field is only used if the question type
     choices = models.TextField(blank=True, null=True,
-                               help_text='if the question type is "radio," "select," or "select multiple" provide a '
-                                         'comma-separated list of options for this question .')
+                               help_text='질문종류가 "라디오버튼", "선택형", "다중선택형" 이면 선택지들을 쉼표로 구분하여 입력하세요.')
 
     def save(self, *args, **kwargs):
         if (self.question_type == Question.RADIO or self.question_type == Question.SELECT

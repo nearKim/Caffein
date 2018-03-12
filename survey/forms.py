@@ -1,14 +1,17 @@
 from django import forms
-from django.forms import ModelForm
+from django.forms import ModelForm, inlineformset_factory
 
 from .models import *
 
 
 # blatantly stolen from
 # http://stackoverflow.com/questions/5935546/align-radio-buttons-horizontally-in-django-forms?rq=1
-
-
 class ResponseForm(ModelForm):
+    """
+    Form that lists questions and create answer forms
+    amended from django-survey package.
+    """
+
     class Meta:
         model = Response
         fields = []
@@ -56,7 +59,7 @@ class ResponseForm(ModelForm):
                 classes = self.field["question_{}".format(q.pk)].widget.attrs.get("class")
                 if classes:
                     self.field["question_{}".format(q.pk)].widget.attrs["class"] = classes + (
-                    " cat_{}".format(q.category.name))
+                        " cat_{}".format(q.category.name))
                 else:
                     self.field["question_{}".format(q.pk)].widget.attrs["class"] = (" cat_{}".format(q.category.name))
             if data:
@@ -67,9 +70,6 @@ class ResponseForm(ModelForm):
         response = super(ResponseForm, self).save(commit=False)
         response.survey = self.survey
         response.user = self.user
-        print("999999999999999999999999999999")
-        print(self.user.is_active)
-        print(response.user.is_active)
         response.save()
 
         # create an answer object for each question and associate it with this
@@ -97,11 +97,18 @@ class ResponseForm(ModelForm):
                 elif q.question_type == Question.INTEGER:
                     a = AnswerInteger(question=q)
                     a.body = field_value
-                print("creating answer to question {} of type {}".format(q_id, a.question.question_type))
-
-                print(a.question.text)
-
-                print('answer value:' + field_value.__str__())
                 a.response = response
                 a.save()
         return response
+
+
+class SurveyQuestionForm(ModelForm):
+    """
+    Deprecated. For creating survey questions for admins.
+    """
+    class Meta:
+        model = Question
+        exclude = ('category',)
+
+
+QuestionFormSet = inlineformset_factory(Survey, Question, form=SurveyQuestionForm, extra=1)
