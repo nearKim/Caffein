@@ -8,8 +8,11 @@
                 <h1>신규 회원가입</h1>
             </div>
             <br>
+            <h3>1. 회원정보 입력</h3>
+            <br>
             <div class="libre-text mb-50">
                 <p>다음은 서울대학교 중앙 커피동아리 카페인의 가입약관입니다.</p>
+                {#FIXME: UPDATE rules url#}
                 <a href="http://www.google.com" class="gray-btn">약관보기</a>
             </div>
             <p class="libre-text"><strong>본인은 가입약관을 모두 읽었음을 확인하며 전체 약관에 동의합니다.</strong></p>
@@ -17,7 +20,7 @@
                 {% csrf_token %}
                 {{ form|crispy }}
                 <div class="text-center">
-                    <input type="submit" class="btn btn-default" value="제출"/>
+                    <input type="submit" class="btn btn-default" value="다음 단계로"/>
                 </div>
             </form>
         </div>

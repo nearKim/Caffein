@@ -1,7 +1,7 @@
 
 {% autoescape off %}
 안녕하세요. {{ user.name }} 님.
-이메일 인증을 완료하려면 아래 url을 클릭하세요.
+이메일 인증을 완료하고 가입설문을 작성하려면 아래 url을 클릭하세요.
 
 http://{{ domain }}{% url 'accounts:user-activate' uid=uid token=token%}
 {% endautoescape %}

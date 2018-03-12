@@ -1,7 +1,9 @@
+from django.core.exceptions import ValidationError
 from django.http import HttpResponse
 from django.shortcuts import render
-
+from django.contrib.auth import login
 from accounts.models import User
+from accounts.tokens import account_activation_token
 from .forms import (ResponseForm)
 from .models import (
     Survey,
@@ -10,23 +12,22 @@ from .models import (
 from core.utils import get_latest_os
 
 
-def SurveyDetail(request, id):
-    latest_os = get_latest_os()
-    survey = Survey.objects.get(survey_year=latest_os.current_year, survey_semester=latest_os.current_semester)
+def survey_detail(request, id):
     user = User.objects.get(id=id)
-    category_items = Category.objects.filter(survey=survey)
-    categories = [c.name for c in category_items]
-    print('categories for this survey:' + categories.__str__())
+    # Quickfix: Don't know why but is_Active sets to True when this view is called.
+    user.is_active = False
+    latest_os = get_latest_os()
+    survey = Survey.objects.get(survey_year=latest_os.current_year,
+                                survey_semester=latest_os.current_semester)
 
     if request.method == 'POST':
-        print(request.method)
-        print(request.user)
         form = ResponseForm(request.POST, user=user, survey=survey)
         if form.is_valid():
+            user.is_active = True
+            user.save()
+            login(request, user)
             response = form.save()
-            return HttpResponse("씨발 됐다")
+            return render(request, 'accounts/user_verified_now_pay.html', {'operation': latest_os, 'user':user})
     else:
-        print(request.method)
-        print(request)
         form = ResponseForm(user=user, survey=survey)
-    return render(request, 'survey/survey.html', {'response_form': form, 'survey': survey, 'categories': categories})
+    return render(request, 'survey/survey.html', {'response_form': form, 'survey': survey, 'user': user})

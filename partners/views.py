@@ -16,10 +16,9 @@ class PartnerList(LoginRequiredMixin, ListView):
         Else if Partner's current semester and year is equal to latest os scheme return details.
         Else, they are not equal to latest os scheme, it means new os scheme for the next semester is registered.
         Clearly the case which current partners are expired.
-        :return:
         """
         queryset = self.get_queryset()
-        if queryset is None:
+        if queryset.count() == 0:
             return ['partners/partners_not_yet.html']
 
         current_year, current_semester = queryset.first().partner_year, queryset.first().partner_semester
@@ -47,11 +46,14 @@ class PartnerList(LoginRequiredMixin, ListView):
             return Partners.objects.all().filter(old_partner=self.current_old_partner)
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['now'] = datetime.datetime.now()
-        context['score'] = self.partner.score
-        context['old_user'] = self.current_old_partner.user
-        print(context)
+        try:
+            context = super().get_context_data(**kwargs)
+            context['now'] = datetime.datetime.now()
+            context['score'] = self.partner.score
+            context['old_user'] = self.current_old_partner.user
+        except AttributeError:
+            # In case context is none
+            context = None
         return context
 
 
