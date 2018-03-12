@@ -8,7 +8,7 @@ from .models import Partners
 from core.models import OperationScheme
 
 
-class PartnerDetail(LoginRequiredMixin, ListView):
+class PartnerList(LoginRequiredMixin, ListView):
 
     def get_template_names(self):
         """

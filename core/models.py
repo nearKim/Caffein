@@ -15,7 +15,7 @@ class OperationScheme(models.Model):
         ('kk', '케이뱅크'),
         ('ka', '카카오뱅크'),
         ('kd', 'KDB산업은행'),
-        ('IB', 'IBK기업은행'),
+        ('ib', 'IBK기업은행'),
         ('sh', '수협은행'),
         ('sm', '새마을금고')
 
@@ -48,25 +48,6 @@ class OperationScheme(models.Model):
         return march_second if self.current_semester == 1 else september_first
 
     new_register_start.short_description = '신입회원 가입시작일'
-
-    def get_os_now(self):
-        """
-        :return: OperatingScheme which designates current time. Probably not the latest one.
-        """
-        current_year = datetime.date.today().year
-        current_semester = 1 if datetime.date.today().month in range(3, 9) else 2
-        os1 = self.objects.filter(current_year=current_year)
-        os2 = self.objects.filter(current_semester=current_semester)
-        os_object = os1.intersection(os2)
-        if not os_object.count() == 1:
-            raise ValueError('Operating table이 이상합니다. 관리자 계정에서 꼭 확인하세요!')
-        return os_object.first()
-
-    def get_latest_os(self):
-        """
-        :return: The latest OperatingScheme
-        """
-        return self.objects.latest('id')
 
     class Meta:
         verbose_name = '운영 정보'

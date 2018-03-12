@@ -85,6 +85,7 @@ class User(AbstractBaseUser, PermissionsMixin):
                              help_text='01x-xxxx-xxxx 형식으로 적어주세요')
     student_no = models.CharField(_('학번'), max_length=12,
                                   validators=[student_no_validator],
+                                  unique=True,
                                   blank=False,
                                   null=False,
                                   help_text='20xx-xxxxx 형식으로 적어주세요')

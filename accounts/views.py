@@ -13,6 +13,7 @@ from django.template.loader import render_to_string
 from django.contrib.auth.mixins import LoginRequiredMixin
 from accounts.tokens import account_activation_token
 from core.models import OperationScheme
+from core.utils import get_latest_os, get_os_now
 from .models import (
     User,
     ActiveUser
@@ -106,20 +107,33 @@ def activate(request, uid, token):
 def old_signup(request, pk):
     user = User.objects.get(id=pk)
     now = datetime.date.today()
-    os_object = OperationScheme.objects.latest('id')
-    if now < os_object.old_register_start or now > os_object.old_register_end:
-        return render(request, 'accounts/user_register_not_now.html')
-    if request.method == 'POST':
-        HttpResponse('Bad Request.')
+    current_os = get_os_now()
+    latest_os = get_latest_os()
+
+    if current_os.old_register_start is None or current_os.old_register_end is None:
+        # Boss didn't input old register start date
+        return HttpResponse('운영진이 기존 회원 재가입 기간을 아직 입력하지 않았습니다.')
+    elif datetime.date.today() < current_os.old_register_start or datetime.date.today() > current_os.old_register_end:
+        return HttpResponse('재가입 신청기간이 아닙니다.')
+    elif latest_os.id == current_os.id:
+        return HttpResponse("운영진이 아직 다음 학기 운영 스키마를 작성하지 않았습니다.")
     else:
-        return render(request, 'accounts/old_register.html', {'operation': os_object, 'user': user})
+        return render(request, 'accounts/old_register.html', {'operation': latest_os, 'user': user})
+
+    # latest_os = OperationScheme.objects.latest('id')
+    # if now < latest_os.old_register_start or now > latest_os.old_register_end:
+    #     return render(request, 'accounts/user_register_not_now.html')
+    # if request.method == 'POST':
+    #     HttpResponse('Bad Request.')
+    # else:
+    #     return render(request, 'accounts/old_register.html', {'operation': latest_os, 'user': user})
 
 
 @login_required()
 def old_now_pay(request, pk):
     old_user = User.objects.get(id=pk)
-    current_os = OperationScheme.get_os_now()
-    latest_os = OperationScheme.get_latest_os()
+    current_os = get_os_now()
+    latest_os = get_latest_os()
     # os_object = OperationScheme.objects.latest('id')
     if current_os.old_register_start is None or current_os.old_register_end is None:
         # Boss didn't input old register start date
@@ -140,6 +154,5 @@ def old_now_pay(request, pk):
         active_user.save()
 
     return render(request, 'accounts/old_user_now_pay.html', {'operation': current_os, 'user': old_user})
-
 
 

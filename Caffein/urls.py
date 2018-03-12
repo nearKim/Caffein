@@ -19,6 +19,7 @@ from django.conf.urls import include
 
 from django.conf import settings
 from django.contrib.auth import views as auth_views
+
 if not settings.configured:
     settings.configure('Caffein.settings.dev', DEBUG=True)
 from django.conf.urls.static import static
@@ -33,6 +34,8 @@ urlpatterns = [
     path('partners/', include('partners.urls', namespace='partners')),
     path('accounts/', include('accounts.urls', namespace='accounts')),
     path('postings/', include('postings.urls', namespace='postings')),
+
+    path('survey/', include('survey.urls', namespace='surveys'))
 ]
 
 if settings.DEBUG:

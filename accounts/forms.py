@@ -50,7 +50,8 @@ class SignUpForm(UserCreationForm):
                 self.error_messages['password_mismatch'],
                 code='password_mismatch'
             )
-
+    # TODO: ADD dependent dropdown
+    # TODO: ADD semester, year valiations
     class Meta:
         model = User
         fields = ['rule_confirm', 'email', 'password1', 'password2', 'name', 'phone', 'student_no', 'college',
