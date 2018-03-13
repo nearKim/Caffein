@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from accounts.models import User
-from partners.models import Partners
+from partners.models import Partners, PartnerMeeting
 
 
 class PartnerAdmin(admin.ModelAdmin):
@@ -19,3 +19,4 @@ class PartnerAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Partners, PartnerAdmin)
+admin.site.register(PartnerMeeting)

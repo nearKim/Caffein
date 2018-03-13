@@ -1,16 +1,11 @@
-from django.contrib.postgres.fields import ArrayField
 from django.db import models
 from django.utils.timezone import now
 
 from accounts.models import ActiveUser
 from core.category import SEMESTER_CATEGORY
 from core.mixins import TimeStampedModelMixin
-
-from postings.models import (
-    Post,
-    Photo,
-    Comment
-)
+from meetings.models import Meeting
+from postings.models import Post
 
 
 class Partners(TimeStampedModelMixin):
@@ -40,7 +35,8 @@ class Partners(TimeStampedModelMixin):
         return str(self.partner_year)+"년 "+str(self.partner_semester)+"학기"+" ("+self.old_partner.user.name+", "+self.new_partner.user.name+")"
 
 
-class Partner_Meeting(Post):
-    partners = models.ForeignKey(Partners, on_delete=models.CASCADE, verbose_name='짝지')
-    participants = models.ForeignKey(ActiveUser,on_delete=models.PROTECT, verbose_name='참석자')
-    meeting_date = models.DateField(null=False, blank=False, verbose_name='짝모 날짜')
+class PartnerMeeting(Meeting):
+    """
+    Every PartnerMeeting needs an Old_partner.
+    """
+    old_partner = models.ForeignKey(ActiveUser, on_delete=models.CASCADE, verbose_name='위짝지')

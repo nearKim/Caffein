@@ -12,7 +12,7 @@
             </div>
             <div id="partner" class="btn-group-lg">
                 <a href="{% url "partners:show-partner" user.id %}" class="btn">짝모 현황</a>
-                <a href="#" class="btn">짝모 등록</a>
+                <a href="{% url "partners:register-meeting" user.id %}" class="btn">짝모 등록</a>
             </div>
             <br>
             <div id="logout" class="btn-sm">

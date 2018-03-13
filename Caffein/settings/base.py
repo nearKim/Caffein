@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'cafe',
     'postings',
     'partners',
+    'meetings',
 
     # Third Party
     'imagekit',

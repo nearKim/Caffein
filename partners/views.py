@@ -1,11 +1,21 @@
 import datetime
 
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Q
+from django.forms import modelformset_factory
+from django.http import HttpResponse
+from django.shortcuts import render
 from django.views.generic import ListView
 
-from accounts.models import ActiveUser
+from accounts.models import ActiveUser, User
+from partners.forms import PartnerMeetingForm
+from postings.forms import PostForm
+from postings.models import Photo
 from .models import Partners
 from core.models import OperationScheme
+
+# TODO: Register this variable
+PARTNER_MEETING_SCORE = 0
 
 
 class PartnerList(LoginRequiredMixin, ListView):
@@ -57,5 +67,55 @@ class PartnerList(LoginRequiredMixin, ListView):
         return context
 
 
-def register_meeting(request):
-    pass
+def partner_return(pk):
+    objs = Partners.objects.select_related('old_partner').filter(old_partner__user_id=pk)
+    if not objs.count() == 0:
+        return objs
+    else:
+        old_pk = Partners.objects.get(new_partner__user_id=pk).old_partner.user_id
+        return partner_return(old_pk)
+
+
+def extract_every_member(queryset):
+    """
+    Extracts every member from given Partner queryset
+    """
+    return queryset.values_list('new_partner', flat=True).union(
+        queryset.values_list('old_partner', flat=True))
+
+
+def register_meeting(request, pk):
+    partners_queryset = partner_return(pk)
+    photo_formset = modelformset_factory(Photo, fields=('photo',), extra=2)
+    target = extract_every_member(partners_queryset)
+    all_member_qs = ActiveUser.objects.select_related('user').filter(id__in=target)
+    old_partner = all_member_qs.get(is_new=False)
+
+    if request.method == 'POST':
+        formset = photo_formset(request.POST, request.FILES)
+        # No need to pass old_partner query to PartnerMeetingForm.
+        print(request.POST)
+        partner_form = PartnerMeetingForm(all_member_qs.filter(is_new=True), request.POST)
+
+        if partner_form.is_valid() and formset.is_valid():
+            meeting = partner_form.save(commit=False)
+            print(request.POST['participants'])
+            meeting.author = User.objects.get(id=pk)
+            meeting.old_partner = old_partner
+            meeting.save()
+            # https://stackoverflow.com/questions/5612991/saving-many-to-many-data-via-a-modelform-in-django
+            partner_form.save_m2m()
+
+            for form in formset.cleaned_data:
+                try:
+                    photo = form['photo']
+                except:
+                    continue
+                temp_photo = Photo(post=meeting, photo=photo)
+                temp_photo.save()
+            #     TODO: Go to Partner list 
+            return HttpResponse("fuck")
+    else:
+        partner_form = PartnerMeetingForm(all_member_qs.filter(is_new=True), partner=partners_queryset)
+        formset = photo_formset()
+    return render(request, 'partners/partner_form.html', {'form': partner_form, 'formset': formset, 'old': old_partner})

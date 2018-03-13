@@ -102,9 +102,6 @@ def activate(request, uid, token):
 
 @login_required()
 def old_signup(request, pk):
-    """
-
-    """
     user = User.objects.get(id=pk)
     now = datetime.date.today()
     current_os = get_os_now()
@@ -113,7 +110,7 @@ def old_signup(request, pk):
     if current_os.old_register_start is None or current_os.old_register_end is None:
         # Boss didn't input old register start date
         return HttpResponse('운영진이 기존 회원 재가입 기간을 아직 입력하지 않았습니다.')
-    elif datetime.date.today() < current_os.old_register_start or datetime.date.today() > current_os.old_register_end:
+    elif now < current_os.old_register_start or now > current_os.old_register_end:
         return HttpResponse('재가입 신청기간이 아닙니다.')
     elif latest_os.id == current_os.id:
         return HttpResponse("운영진이 아직 다음 학기 운영 스키마를 작성하지 않았습니다.")
