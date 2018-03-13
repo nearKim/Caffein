@@ -1,5 +1,6 @@
 import datetime
 
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.forms import modelformset_factory
@@ -15,7 +16,7 @@ from .models import Partners
 from core.models import OperationScheme
 
 # TODO: Register this variable
-PARTNER_MEETING_SCORE = 0
+PARTNER_MEETING_SCORE = 2
 
 
 class PartnerList(LoginRequiredMixin, ListView):
@@ -68,6 +69,9 @@ class PartnerList(LoginRequiredMixin, ListView):
 
 
 def partner_return(pk):
+    """
+    returns Partner objects based on passed parameter pk
+    """
     objs = Partners.objects.select_related('old_partner').filter(old_partner__user_id=pk)
     if not objs.count() == 0:
         return objs
@@ -84,22 +88,29 @@ def extract_every_member(queryset):
         queryset.values_list('old_partner', flat=True))
 
 
+def update_score(queryset):
+    for partner in queryset:
+        partner.score += PARTNER_MEETING_SCORE
+
+@login_required()
 def register_meeting(request, pk):
-    partners_queryset = partner_return(pk)
+    # Initialize variables
     photo_formset = modelformset_factory(Photo, fields=('photo',), extra=2)
+    partners_queryset = partner_return(pk)
     target = extract_every_member(partners_queryset)
     all_member_qs = ActiveUser.objects.select_related('user').filter(id__in=target)
+
     old_partner = all_member_qs.get(is_new=False)
+    new_partners = all_member_qs.filter(is_new=True)
 
     if request.method == 'POST':
-        formset = photo_formset(request.POST, request.FILES)
+        formset = photo_formset(request.POST, request.FILES, queryset=Photo.objects.none())
         # No need to pass old_partner query to PartnerMeetingForm.
-        print(request.POST)
-        partner_form = PartnerMeetingForm(all_member_qs.filter(is_new=True), request.POST)
+        partner_form = PartnerMeetingForm(new_partners, request.POST)
 
         if partner_form.is_valid() and formset.is_valid():
             meeting = partner_form.save(commit=False)
-            print(request.POST['participants'])
+            meeting.people_number = len(request.POST.getlist('participants'))
             meeting.author = User.objects.get(id=pk)
             meeting.old_partner = old_partner
             meeting.save()
@@ -113,9 +124,9 @@ def register_meeting(request, pk):
                     continue
                 temp_photo = Photo(post=meeting, photo=photo)
                 temp_photo.save()
-            #     TODO: Go to Partner list 
+            #     TODO: Go to Partner list
             return HttpResponse("fuck")
     else:
         partner_form = PartnerMeetingForm(all_member_qs.filter(is_new=True), partner=partners_queryset)
-        formset = photo_formset()
+        formset = photo_formset(queryset=Photo.objects.none())
     return render(request, 'partners/partner_form.html', {'form': partner_form, 'formset': formset, 'old': old_partner})

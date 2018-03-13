@@ -24,7 +24,7 @@ class Post(PostableMixin):
 
 
 class Photo(models.Model):
-    post = models.ForeignKey(Post, on_delete=models.CASCADE, default=None, related_name='photo')
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='photo')
     photo = models.ImageField(upload_to=get_photo_path, verbose_name='사진')
 
 

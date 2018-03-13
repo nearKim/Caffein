@@ -29,7 +29,6 @@ class PartnerMeetingForm(forms.ModelForm):
             self.fields['participants'] = forms.ModelMultipleChoiceField(queryset=queryset,
                                                                          widget=forms.CheckboxSelectMultiple())
 
-
     class Meta:
         model = PartnerMeeting
         fields = ['title', 'content', 'participants', 'meeting_date']
