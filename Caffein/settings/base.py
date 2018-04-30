@@ -10,7 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
-import os
+import os, json
+from django.core.exceptions import ImproperlyConfigured
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -18,8 +19,24 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'nzal6^kda#&-3hwine$ay8#_flble-g&&xznp5&srd_sj!m)%f'
+
+# SECRET KEY handling
+# https://wayhome25.github.io/django/2017/07/11/django-settings-secret-key/
+SECRET_FILE = os.path.join(BASE_DIR, 'keys.json')
+
+with open(SECRET_FILE) as f:
+    keys = json.loads(f.read())
+
+
+def get_secret(setting, keys=keys):
+    try:
+        return keys[setting]
+    except KeyError:
+        error_msg = "Set the {} environment variable".format(setting)
+        raise ImproperlyConfigured(error_msg)
+
+
+SECRET_KEY = get_secret("SECRET_KEY")
 
 ALLOWED_HOSTS = []
 

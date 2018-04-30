@@ -1,3 +1,6 @@
+# Secret information
+keys.json
+
 # Virtual env
 /myenv/*
 myenv/
